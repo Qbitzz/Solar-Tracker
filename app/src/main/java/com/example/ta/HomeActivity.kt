@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -53,6 +54,22 @@ class HomeActivity : AppCompatActivity() {
             // Handle the case when the entries list is empty
             Log.e("HomeActivity", "No data available for the chart")
         }
+
+        // dummy data for textViewArusValue
+        val textViewArusValue = findViewById<TextView>(R.id.textViewArusValue)
+        textViewArusValue.text = "100 A" // Replace with your dummy data
+
+        // Set dummy data for textViewSuhuValue
+        val textViewSuhuValue = findViewById<TextView>(R.id.textViewSuhuValue)
+        textViewSuhuValue.text = "25" // Replace with your dummy data
+
+        // Set dummy data for textViewDayaValue
+        val textViewDayaValue = findViewById<TextView>(R.id.textViewDayaValue)
+        textViewDayaValue.text = "120 W" // Replace with your dummy data
+
+        // Set dummy data for textViewLuxValue
+        val textViewLuxValue = findViewById<TextView>(R.id.textViewLuxValue)
+        textViewLuxValue.text = "500" // Replace with your dummy data
     }
 
     private fun setupHomeButtons() {
