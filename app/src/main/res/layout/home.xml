@@ -27,7 +27,7 @@
             android:layout_marginLeft="155dp"
             android:src="@drawable/home" />
 
-        <!-- Add an empty view -->
+        <!-- empty view -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -48,17 +48,24 @@
         android:orientation="vertical"
         android:layout_below="@id/image_button_layout"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="16dp">
+
+        <!-- Add a line chart above Arus card view -->
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/line_chart"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="10dp" />
 
         <!-- Menu Item 1: Arus -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewArus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="15dp"
             app:cardElevation="4dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -101,9 +108,9 @@
             android:id="@+id/cardViewSuhu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="15dp"
             app:cardElevation="4dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -146,9 +153,9 @@
             android:id="@+id/cardViewDaya"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="15dp"
             app:cardElevation="4dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -191,7 +198,7 @@
             android:id="@+id/cardViewLux"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="15dp"
             app:cardElevation="4dp">
 
             <LinearLayout
@@ -204,8 +211,8 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/lux" />
+                    android:src="@drawable/lux"
+                    android:layout_marginEnd="8dp" />
 
                 <TextView
                     android:id="@+id/textViewLuxTitle"
@@ -216,7 +223,7 @@
 
                 <!-- Add some spacing -->
                 <Space
-                    android:layout_width="180dp"
+                    android:layout_width="170dp"
                     android:layout_height="wrap_content" />
 
                 <TextView
