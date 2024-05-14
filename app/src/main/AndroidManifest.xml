@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.TA"
+        android:name=".MyApplication"
         tools:targetApi="31">
 
         <!-- Set HomeActivity as the launcher activity -->
