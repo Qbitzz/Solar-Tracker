@@ -1,247 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:layout_height="match_parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/darkblue" />
-
-    <LinearLayout
-        android:id="@+id/image_button_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_alignParentStart="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="20dp" >
+        android:background="@android:color/transparent">
 
-        <!-- Back Button -->
-        <Button
-            android:id="@+id/btn_back"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@drawable/back" />
 
-        <!-- Home Image -->
-        <ImageView
-            android:id="@+id/control"
-            android:layout_width="80dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="115dp"
-            android:src="@drawable/control" />
-
-        <!-- Spacer -->
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <!-- Home Button -->
-        <Button
-            android:id="@+id/btn_home"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@drawable/hbutton" />
-
-    </LinearLayout>
-
-    <!-- CardView containing sumbu x and sumbu y -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewSumbu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_below="@id/image_button_layout"
-        android:layout_centerHorizontal="true"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="4dp">
-
+        <!-- Image button layout -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/image_button_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="30dp"
+            android:background="@color/darkblue">
 
-            <!-- Sumbu X -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="20dp">
+            <!-- Back Button -->
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/back" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Sumbu X"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/darker_gray" />
+            <!-- Spacer -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-                <!-- Value for Sumbu X -->
-                <TextView
-                    android:id="@+id/sumbu_x_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="18sp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
+            <!-- Home Image -->
+            <ImageView
+                android:id="@+id/control"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/control" />
 
-            <!-- Sumbu Y -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="20dp">
+            <!-- Spacer -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sumbu Y"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/darker_gray" />
-
-                <!-- Value for Sumbu Y -->
-                <TextView
-                    android:id="@+id/sumbu_y_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text=""
-                    android:textSize="18sp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
+            <!-- Home Button -->
+            <Button
+                android:id="@+id/btn_home"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/hbutton" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/cardViewSumbu"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp">
-
-        <!-- Tombol: Atas -->
+        <!-- CardView containing sumbu x and sumbu y -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardviewatas"
+            android:id="@+id/cardViewSumbu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_button_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <!-- Sumbu X -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Sumbu X"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/darker_gray" />
+
+                    <!-- Value for Sumbu X -->
+                    <TextView
+                        android:id="@+id/sumbu_x_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+                <!-- Sumbu Y -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sumbu Y"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/darker_gray" />
+
+                    <!-- Value for Sumbu Y -->
+                    <TextView
+                        android:id="@+id/sumbu_y_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- LinearLayout for atas, kiri, kanan, and bawah buttons -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="4dp"
+            android:layout_below="@id/cardViewSumbu"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="15dp">
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="vertical">
 
-
-            <LinearLayout
-                android:id="@+id/atas"
+            <!-- Tombol Atas -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardviewatas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:clickable="true">
+                app:cardCornerRadius="15dp"
+                app:cardElevation="4dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp">
 
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/atas"
-                    android:scaleType="fitCenter" />
 
-            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/atas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:clickable="true">
 
-        </androidx.cardview.widget.CardView>
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/atas"
+                        android:scaleType="fitCenter" />
 
-        <!-- Tombol: Kiri -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewkiri"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="15dp"
-            android:clickable="true">
+                </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/kiri"
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tombol Kiri -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewkiri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="15dp"
                 android:clickable="true">
 
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/kiri"
-                    android:scaleType="fitCenter" />
+                <LinearLayout
+                    android:id="@+id/kiri"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:clickable="true">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/kiri"
+                        android:scaleType="fitCenter" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-        <!-- Tombol: Kanan -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewkanan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="15dp"
-            android:clickable="true">
+            </androidx.cardview.widget.CardView>
 
-            <LinearLayout
-                android:id="@+id/kanan"
+            <!-- Tombol Kanan -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewkanan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="4dp"
+                android:layout_marginBottom="15dp"
                 android:clickable="true">
 
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/kanan"
-                    android:scaleType="fitCenter" />
+                <LinearLayout
+                    android:id="@+id/kanan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:clickable="true">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/kanan"
+                        android:scaleType="fitCenter" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-        <!-- Tombol: Bawah -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewbawah"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="0dp"
-            android:clickable="true">
+            </androidx.cardview.widget.CardView>
 
-            <LinearLayout
-                android:id="@+id/bawah"
+            <!-- Tombol Bawah -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewbawah"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="4dp"
+                android:layout_marginTop="0dp"
                 android:clickable="true">
 
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/bawah"
-                    android:scaleType="fitCenter" />
+                <LinearLayout
+                    android:id="@+id/bawah"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:clickable="true">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/bawah"
+                        android:scaleType="fitCenter" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-    </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-</RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+</ScrollView>

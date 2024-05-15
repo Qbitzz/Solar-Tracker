@@ -1,6 +1,7 @@
 package com.example.ta
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,15 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class HomeActivity : AppCompatActivity() {
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+            // Dark mode is enabled
+        } else {
+            // Light mode is enabled
+        }
+    }
 
     private lateinit var database: FirebaseDatabase
 
@@ -43,6 +53,9 @@ class HomeActivity : AppCompatActivity() {
 
         // Load Lux data from Firebase
         loadLuxData()
+
+        //Load Temp Data
+        loadtempdata()
 
         // Check if the application is connected to Firebase
                 if (FirebaseApp.getInstance() == null) {
@@ -91,18 +104,34 @@ class HomeActivity : AppCompatActivity() {
         val textViewArusValue = findViewById<TextView>(R.id.textViewArusValue)
         textViewArusValue.text = "100 A" // Replace with your dummy data
 
-        // Set dummy data for textViewSuhuValue
-        val textViewSuhuValue = findViewById<TextView>(R.id.textViewSuhuValue)
-        textViewSuhuValue.text = "25" // Replace with your dummy data
-
         // Set dummy data for textViewDayaValue
         val textViewDayaValue = findViewById<TextView>(R.id.textViewDayaValue)
         textViewDayaValue.text = "120 W" // Replace with your dummy data
 
-        // Set dummy data for textViewLuxValue
-        //val textViewLuxValue = findViewById<TextView>(R.id.textViewLuxValue)
-        //textViewLuxValue.text = "500" // Replace with your dummy data
     }
+
+    private fun loadtempdata() {
+        val tempRef = database.reference.child("temperature")
+        tempRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val temperature = snapshot.getValue(Double::class.java)
+                if (temperature != null) {
+                    // Find the TextView for Temperature Value
+                    val textViewSuhuValue = findViewById<TextView>(R.id.textViewSuhuValue)
+                    // Update the TextView with the Temperature value
+                    textViewSuhuValue.text = "$temperature C"
+                    // Log the Temperature value for debugging
+                    Log.d("HomeActivity", "Temperature value: $temperature")
+                } else {
+                    Log.e("HomeActivity", "Failed to read temperature data: temperature is null")
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("HomeActivity", "Failed to read temperature data", error.toException())
+            }
+        })
+    }
+
 
     private fun loadLuxData() {
         val luxRef = database.reference.child("ldr").child("lt")
@@ -126,7 +155,6 @@ class HomeActivity : AppCompatActivity() {
                     Log.e("HomeActivity", "Lux node does not exist")
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("HomeActivity", "Failed to read Lux data", error.toException())
             }
