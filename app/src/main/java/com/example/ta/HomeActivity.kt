@@ -9,9 +9,11 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -19,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeActivity : AppCompatActivity() {
 
@@ -69,29 +73,103 @@ class HomeActivity : AppCompatActivity() {
         // Find the LineChart view
         val lineChart = findViewById<LineChart>(R.id.line_chart)
 
-        // Create a list of entries (x,y) for your chart
+// Create a list of entries (x,y) for your chart
         val entries = ArrayList<Entry>()
-        entries.add(Entry(0f, 10f))
+        entries.add(Entry(0f, 10f)) // Start from 0f to align with the current hour
         entries.add(Entry(1f, 20f))
         entries.add(Entry(2f, 15f))
         entries.add(Entry(3f, 25f))
         entries.add(Entry(4f, 30f))
         entries.add(Entry(5f, 20f))
 
-        // Check if the entries list is not empty
+// Check if the entries list is not empty
         if (entries.isNotEmpty()) {
             // Create a dataset from the entries
-            val dataSet = LineDataSet(entries, "Energy Gain Per Hour")
+            val dataSet = LineDataSet(entries, "Watt Gain Per Hour")
 
-            // Set some styling options for the dataset
-            dataSet.color = Color.BLUE
+            // Apply gradient fill
+            dataSet.setDrawFilled(true)
+            dataSet.color = Color.GREEN
             dataSet.valueTextColor = Color.BLACK
+            dataSet.fillAlpha = 80
+
+            // Customize marker
+            dataSet.setDrawCircles(true)
+            dataSet.setCircleColor(Color.GREEN)
+            dataSet.circleRadius = 3f // Adjust circle size
+            dataSet.setDrawValues(true) // Hide values on markers
+
+            // Adjust the width of the line
+            dataSet.lineWidth = 3f // Set the desired width here
 
             // Create a LineData object with the dataset
             val lineData = LineData(dataSet)
-
-            // Set the data to the chart
             lineChart.data = lineData
+
+            // Customize the appearance of the chart
+            lineChart.apply {
+                // Remove description
+                description.isEnabled = false
+                // Remove legend
+                legend.isEnabled = false
+                // Disable zoom
+                setPinchZoom(false)
+                // Disable double tap to zoom
+                setDoubleTapToZoomEnabled(false)
+                // Disable all interactions
+                setTouchEnabled(false)
+            }
+
+            // Get current hour in 24-hour format
+            val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+            // Check if the app is in dark mode
+            val isDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+            // Customize the X axis (bottom axis)
+            lineChart.xAxis.apply {
+                // Enable X axis
+                isEnabled = true
+                // Disable grid lines
+                setDrawGridLines(false)
+                // Set position to bottom
+                position = XAxis.XAxisPosition.BOTTOM
+                // Set label count to match the number of entries
+                labelCount = entries.size
+                // Set label text color based on dark mode
+                textColor = if (isDarkMode) Color.WHITE else Color.BLACK
+                // Set label text size
+                textSize = 12f
+                // Set value formatter to display hours
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        // Calculate the hour based on the current hour and the value offset
+                        val hour = (currentHour + value.toInt()) % 24 // Ensure the hour wraps around correctly
+                        // Return the formatted hour
+                        return "%02d:00".format(hour)
+                    }
+                }
+            }
+
+            // Customize the Y axis (left axis)
+            lineChart.axisLeft.apply {
+                // Enable Y axis
+                isEnabled = true
+                // Disable grid lines
+                setDrawGridLines(false)
+                // Set label text color based on dark mode
+                textColor = if (isDarkMode) Color.WHITE else Color.BLACK
+                // Set label text size
+                textSize = 12f
+                // Set value formatter to display watt
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        return "${value.toInt()}W"
+                    }
+                }
+            }
+            // Disable the right Y axis
+            lineChart.axisRight.isEnabled = false
 
             // Refresh the chart
             lineChart.invalidate()
