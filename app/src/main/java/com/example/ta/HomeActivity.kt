@@ -3,6 +3,9 @@ package com.example.ta
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Shader
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -92,6 +95,15 @@ class HomeActivity : AppCompatActivity() {
             dataSet.color = Color.GREEN
             dataSet.valueTextColor = Color.BLACK
             dataSet.fillAlpha = 80
+
+            // Create gradient fill with green color
+            val startColor = Color.parseColor("#80FFFFFF") // Transparent white
+            val endColor = Color.parseColor("#8000FF00")   // Transparent green
+            val gradientColors = intArrayOf(startColor, endColor)
+            val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradientColors)
+
+            // Set gradient fill
+            dataSet.fillDrawable = gradientDrawable
 
             // Customize marker
             dataSet.setDrawCircles(true)
