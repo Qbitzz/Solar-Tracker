@@ -83,7 +83,7 @@ class HomeActivity : AppCompatActivity() {
         entries.add(Entry(2f, 15f))
         entries.add(Entry(3f, 25f))
         entries.add(Entry(4f, 30f))
-        entries.add(Entry(5f, 20f))
+        entries.add(Entry(5f, 20f)) // Add more entries if needed
 
 // Check if the entries list is not empty
         if (entries.isNotEmpty()) {
@@ -138,7 +138,6 @@ class HomeActivity : AppCompatActivity() {
             // Check if the app is in dark mode
             val isDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
-            // Customize the X axis (bottom axis)
             lineChart.xAxis.apply {
                 // Enable X axis
                 isEnabled = true
@@ -146,8 +145,10 @@ class HomeActivity : AppCompatActivity() {
                 setDrawGridLines(false)
                 // Set position to bottom
                 position = XAxis.XAxisPosition.BOTTOM
-                // Set label count to match the number of entries
-                labelCount = entries.size
+                // Reduce label count to avoid duplicates
+                labelCount = 10 // You can adjust this value as needed
+                // Enable granularity to prevent duplicate labels
+                setGranularityEnabled(true)
                 // Set label text color based on dark mode
                 textColor = if (isDarkMode) Color.WHITE else Color.BLACK
                 // Set label text size
@@ -156,9 +157,11 @@ class HomeActivity : AppCompatActivity() {
                 valueFormatter = object : ValueFormatter() {
                     override fun getFormattedValue(value: Float): String {
                         // Calculate the hour based on the current hour and the value offset
-                        val hour = (currentHour + value.toInt()) % 24 // Ensure the hour wraps around correctly
+                        val hour = (currentHour - entries.size + 1 + value.toInt()) % 24
+                        // Ensure the hour wraps around correctly
+                        val displayHour = if (hour < 0) hour + 24 else hour
                         // Return the formatted hour
-                        return "%02d:00".format(hour)
+                        return "%02d:00".format(displayHour)
                     }
                 }
             }
