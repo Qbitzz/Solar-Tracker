@@ -200,7 +200,6 @@ class HomeActivity : AppCompatActivity() {
         // Set dummy data for textViewDayaValue
         val textViewDayaValue = findViewById<TextView>(R.id.textViewDayaValue)
         textViewDayaValue.text = "120 W" // Replace with your dummy data
-
     }
 
     private fun loadtempdata() {
@@ -224,7 +223,6 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
-
 
     private fun loadLuxData() {
         val luxRef = database.reference.child("ldr").child("lt")
@@ -254,7 +252,6 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-
     private fun setupHomeButtons() {
         val btnControl = findViewById<Button>(R.id.btn_control)
         btnControl.setOnClickListener {
@@ -262,7 +259,6 @@ class HomeActivity : AppCompatActivity() {
             switchToControlLayout()
         }
     }
-
     private fun switchToControlLayout() {
         startActivity(Intent(this, ControlActivity::class.java))
         finish()

@@ -4,21 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent">
 
-
         <!-- Image button layout -->
         <LinearLayout
             android:id="@+id/image_button_layout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="30dp"
-            android:background="@color/darkblue">
+            android:padding="20dp"
+            android:background="@color/darkblue"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <!-- Back Button -->
             <Button
@@ -60,11 +62,12 @@
             android:id="@+id/cardViewSumbu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_button_layout"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
             app:cardCornerRadius="15dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/image_button_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -76,16 +79,16 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="20dp">
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Sumbu X"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="20sp" />
 
                     <!-- Value for Sumbu X -->
                     <TextView
@@ -93,23 +96,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textSize="18sp"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
                 </LinearLayout>
+
+                <!-- Spacer -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
                 <!-- Sumbu Y -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="20dp">
+                    android:layout_marginStart="20dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sumbu Y"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="20sp" />
 
                     <!-- Value for Sumbu Y -->
                     <TextView
@@ -118,137 +127,122 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text=""
-                        android:textSize="18sp"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
                 </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- LinearLayout for atas, kiri, kanan, and bawah buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Tombol Atas -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardviewatas"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/cardViewSumbu"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:orientation="vertical">
+            app:cardCornerRadius="15dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintTop_toBottomOf="@id/cardViewSumbu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8">
 
-            <!-- Tombol Atas -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardviewatas"
+            <LinearLayout
+                android:id="@+id/atas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="4dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="15dp">
-
-
-                <LinearLayout
-                    android:id="@+id/atas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    android:clickable="true">
-
-                    <ImageView
-                        android:layout_width="150dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/atas"
-                        android:scaleType="fitCenter" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Tombol Kiri -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewkiri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="4dp"
-                android:layout_marginBottom="15dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
                 android:clickable="true">
 
-                <LinearLayout
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/atas"
+                    android:scaleType="fitCenter" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Tombol Kiri -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewkiri"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/cardviewatas"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <ImageView
                     android:id="@+id/kiri"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:clickable="true">
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/kiri" />
 
-                    <ImageView
-                        android:layout_width="150dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/kiri"
-                        android:scaleType="fitCenter" />
+                <!-- Spacer -->
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Tombol Kanan -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewkanan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="4dp"
-                android:layout_marginBottom="15dp"
-                android:clickable="true">
-
-                <LinearLayout
+                <ImageView
                     android:id="@+id/kanan"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:clickable="true">
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/kanan" />
 
-                    <ImageView
-                        android:layout_width="150dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/kanan"
-                        android:scaleType="fitCenter" />
+            </LinearLayout>
 
-                </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            </androidx.cardview.widget.CardView>
+        <!-- Tombol Bawah -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewbawah"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/cardViewkiri"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintWidth_percent="0.8">
 
-            <!-- Tombol Bawah -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardViewbawah"
+            <LinearLayout
+                android:id="@+id/bawah"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="4dp"
-                android:layout_marginTop="0dp"
-                android:clickable="true">
+                android:clickable="true"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/bawah"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:clickable="true">
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/bawah" />
 
-                    <ImageView
-                        android:layout_width="150dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/bawah"
-                        android:scaleType="fitCenter" />
+            </LinearLayout>
 
-                </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

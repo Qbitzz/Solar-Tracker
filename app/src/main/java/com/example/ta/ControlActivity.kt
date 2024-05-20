@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,34 +30,26 @@ class ControlActivity : AppCompatActivity() {
             switchToHomeLayout()
         }
 
-        // Find the LinearLayout with id atas
+        // Find and Set a click listener LinearLayout with id atas
         val atas = findViewById<LinearLayout>(R.id.atas)
-
-        // Set a click listener for the LinearLayout
         atas.setOnClickListener {
             Toast.makeText(this, "LinearLayout Atas Clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // Find the LinearLayout with id kiri
-        val kiri = findViewById<LinearLayout>(R.id.kiri)
-
-        // Set a click listener for the LinearLayout
+        // Find and Set a click listener ImageView with id kiri
+        val kiri = findViewById<ImageView>(R.id.kiri)
         kiri.setOnClickListener {
-            Toast.makeText(this, "LinearLayout Kiri Clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "ImageView Kiri Clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // Find the LinearLayout with id kanan
-        val kanan = findViewById<LinearLayout>(R.id.kanan)
-
-        // Set a click listener for the LinearLayout
+        // Find and Set a click listener ImageView with id kanan
+        val kanan = findViewById<ImageView>(R.id.kanan)
         kanan.setOnClickListener {
-            Toast.makeText(this, "LinearLayout Kanan Clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "ImageView Kanan Clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // Find the LinearLayout with id bawah
+        // Find and Set a click listener LinearLayout with id bawah
         val bawah = findViewById<LinearLayout>(R.id.bawah)
-
-        // Set a click listener for the LinearLayout
         bawah.setOnClickListener {
             Toast.makeText(this, "LinearLayout Bawah Clicked", Toast.LENGTH_SHORT).show()
         }
