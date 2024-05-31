@@ -50,6 +50,9 @@ class HomeActivity : AppCompatActivity() {
         loadTempData()
         // Setup LineChart
         setupLineChart()
+        // Set hard-coded values for Arus and Daya
+        setArusValue()
+        setDayaValue()
     }
 
     private fun setupLineChart() {
@@ -60,9 +63,11 @@ class HomeActivity : AppCompatActivity() {
         entries.add(Entry(2f, 15f))
         entries.add(Entry(3f, 25f))
         entries.add(Entry(4f, 30f))
-        entries.add(Entry(5f, 20f)) // Add more entries if needed
+        entries.add(Entry(5f, 20f))
+        entries.add(Entry(6f, 18f))
+        entries.add(Entry(7f, 22f))
 
-        if (entries.isNotEmpty()) {
+    if (entries.isNotEmpty()) {
             val dataSet = LineDataSet(entries, "Watt Gain Per Hour")
             dataSet.setDrawFilled(true)
             dataSet.color = Color.GREEN
@@ -176,12 +181,23 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
+    private fun setArusValue() {
+        val textViewArusValue = findViewById<TextView>(R.id.textViewArusValue)
+        textViewArusValue.text = "5 A" // Hard-coded value
+    }
+
+    private fun setDayaValue() {
+        val textViewDayaValue = findViewById<TextView>(R.id.textViewDayaValue)
+        textViewDayaValue.text = "50 W" // Hard-coded value
+    }
+
     private fun setupHomeButtons() {
         val btnControl = findViewById<Button>(R.id.btn_control)
         btnControl.setOnClickListener {
             switchToControlLayout()
         }
     }
+
     private fun switchToControlLayout() {
         startActivity(Intent(this, ControlActivity::class.java))
         finish()

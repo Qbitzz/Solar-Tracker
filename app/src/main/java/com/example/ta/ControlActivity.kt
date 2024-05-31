@@ -6,17 +6,46 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.*
 
 class ControlActivity : AppCompatActivity(), View.OnClickListener {
+
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.control)
 
+        // Initialize Firebase Database
+        database = FirebaseDatabase.getInstance().reference
+
         // Setup buttons in the control.xml layout
         setupControlButtons()
+
+        // Retrieve data from Firebase
+        fetchSumbuData()
+    }
+
+    private fun fetchSumbuData() {
+        val sumbuXValue = findViewById<TextView>(R.id.sumbu_x_value)
+        val sumbuYValue = findViewById<TextView>(R.id.sumbu_y_value)
+
+        database.child("servo").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val targetX = dataSnapshot.child("targetX").getValue(Int::class.java) ?: 0
+                val targetY = dataSnapshot.child("targetY").getValue(Int::class.java) ?: 0
+
+                sumbuXValue.text = targetX.toString()
+                sumbuYValue.text = targetY.toString()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(applicationContext, "Failed to load data", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun setupControlButtons() {
