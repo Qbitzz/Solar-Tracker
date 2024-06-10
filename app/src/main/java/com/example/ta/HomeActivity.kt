@@ -50,9 +50,10 @@ class HomeActivity : AppCompatActivity() {
         loadTempData()
         // Setup LineChart
         setupLineChart()
-        // Set hard-coded values for Arus and Daya
-        setArusValue()
-        setDayaValue()
+        //Load arus data
+        loadLArusData()
+        //Load Daya data
+        loadLDayaData()
     }
 
     private fun setupLineChart() {
@@ -150,7 +151,6 @@ class HomeActivity : AppCompatActivity() {
                     Log.e("HomeActivity", "Failed to read temperature data: temperature is null")
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("HomeActivity", "Failed to read temperature data", error.toException())
             }
@@ -174,21 +174,56 @@ class HomeActivity : AppCompatActivity() {
                     Log.e("HomeActivity", "Lux node does not exist")
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("HomeActivity", "Failed to read Lux data", error.toException())
             }
         })
     }
 
-    private fun setArusValue() {
-        val textViewArusValue = findViewById<TextView>(R.id.textViewArusValue)
-        textViewArusValue.text = "5 A" // Hard-coded value
+    private fun loadLArusData() {
+        val arusRef = database.reference.child("Arus")
+        arusRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val arus = snapshot.getValue(Double::class.java)
+                    if (arus != null) {
+                        val textViewarusValue = findViewById<TextView>(R.id.textViewArusValue)
+                        textViewarusValue.text = "$arus A"
+                        Log.d("HomeActivity", "arus value: $arus")
+                    } else {
+                        Log.e("HomeActivity", "Failed to read arus data: lt is null")
+                    }
+                } else {
+                    Log.e("HomeActivity", "arus node does not exist")
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("HomeActivity", "Failed to read arus data", error.toException())
+            }
+        })
     }
 
-    private fun setDayaValue() {
-        val textViewDayaValue = findViewById<TextView>(R.id.textViewDayaValue)
-        textViewDayaValue.text = "50 W" // Hard-coded value
+    private fun loadLDayaData() {
+        val dayaRef = database.reference.child("Daya")
+        dayaRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val daya = snapshot.getValue(Double::class.java)
+                    if (daya != null) {
+                        val textViewdayaValue = findViewById<TextView>(R.id.textViewDayaValue)
+                        textViewdayaValue.text = "$daya mW"
+                        Log.d("HomeActivity", "daya value: $daya")
+                    } else {
+                        Log.e("HomeActivity", "Failed to read daya data: lt is null")
+                    }
+                } else {
+                    Log.e("HomeActivity", "daya node does not exist")
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("HomeActivity", "Failed to read daya data", error.toException())
+            }
+        })
     }
 
     private fun setupHomeButtons() {
