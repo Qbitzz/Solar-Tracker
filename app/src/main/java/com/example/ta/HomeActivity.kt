@@ -75,8 +75,8 @@ class HomeActivity : AppCompatActivity() {
             dataSet.valueTextColor = Color.BLACK
             dataSet.fillAlpha = 80
 
-            val startColor = Color.parseColor("#80FFFFFF") // Transparent white
-            val endColor = Color.parseColor("#8000FF00")   // Transparent green
+            val startColor = Color.parseColor("#80FFFFFF") // Transparent green
+            val endColor = Color.parseColor("#8000FF00")   // Transparent white
             val gradientColors = intArrayOf(startColor, endColor)
             val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradientColors)
             dataSet.fillDrawable = gradientDrawable
