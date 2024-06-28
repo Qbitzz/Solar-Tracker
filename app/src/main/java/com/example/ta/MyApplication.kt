@@ -12,8 +12,10 @@ class MyApplication : Application() {
         // Initialize Firebase with your API key
         FirebaseApp.initializeApp(this, FirebaseOptions.Builder()
             .setApiKey("AIzaSyDfs_JrXdjGe0UdOf6kQyf6DG5MNeZyllw")
-            .setApplicationId("esp32-f9fad")
+            .setApplicationId("com.example.ta")
+            .setProjectId("esp32-f9fad")
             .setDatabaseUrl("https://esp32-f9fad-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .build())
+
     }
 }

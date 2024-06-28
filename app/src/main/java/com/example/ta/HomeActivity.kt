@@ -177,27 +177,21 @@ class HomeActivity : AppCompatActivity() {
         val tempRef = database.reference.child("Temperature")
         tempRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                // Log the raw data
-                Log.d("HomeActivity", "Raw temperature data: ${snapshot.value}")
-
-                // Loop through the children of the "Temperature" node
-                for (childSnapshot in snapshot.children) {
-                    try {
-                        val temperature = childSnapshot.getValue(Double::class.java)
-                        if (temperature != null) {
-                            val textViewSuhuValue = findViewById<TextView>(R.id.textViewSuhuValue)
-                            textViewSuhuValue.text = "$temperature C"
-                            Log.d("HomeActivity", "Temperature value: $temperature")
-                        } else {
-                            Log.e("HomeActivity", "Failed to read temperature data: Temperature is null")
-                        }
-                    } catch (e: DatabaseException) {
-                        Log.e("HomeActivity", "Failed to convert temperature data", e)
+                if (snapshot.exists()) {
+                    val suhu = snapshot.getValue(Double::class.java)
+                    if (suhu != null) {
+                        val textViewLuxValue = findViewById<TextView>(R.id.textViewSuhuValue)
+                        textViewLuxValue.text = "$suhu C"
+                        Log.d("HomeActivity", "Lux value: $suhu")
+                    } else {
+                        Log.e("HomeActivity", "Failed to read Temperature data: lt is null")
                     }
+                } else {
+                    Log.e("HomeActivity", "Temperature node does not exist")
                 }
             }
             override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeActivity", "Failed to read temperature data", error.toException())
+                Log.e("HomeActivity", "Failed to read Temprerature data", error.toException())
             }
         })
     }
