@@ -1,6 +1,8 @@
 package com.example.ta
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -9,6 +11,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -24,6 +28,11 @@ import java.util.*
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var database: FirebaseDatabase
+    private lateinit var bluetoothManager: BluetoothManager
+
+    companion object {
+        private const val REQUEST_ENABLE_BLUETOOTH = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +41,12 @@ class HomeActivity : AppCompatActivity() {
 
         // Initialize Firebase
         database = Firebase.database
+
+        // Initialize BluetoothManager
+        bluetoothManager = BluetoothManager(this)
+
+        // Check Bluetooth permissions
+        bluetoothManager.requestBluetoothPermission()
 
         // Check if the application is connected to Firebase
         if (FirebaseApp.getInstance() == null) {
@@ -58,37 +73,57 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupLineChart() {
         val lineChart = findViewById<LineChart>(R.id.line_chart)
-        val entries = ArrayList<Entry>()
-        entries.add(Entry(0f, 10f)) // Start from 0f to align with the current hour
-        entries.add(Entry(1f, 20f))
-        entries.add(Entry(2f, 15f))
-        entries.add(Entry(3f, 25f))
-        entries.add(Entry(4f, 30f))
-        entries.add(Entry(5f, 20f))
-        entries.add(Entry(6f, 18f))
-        entries.add(Entry(7f, 22f))
+        var entries1 = ArrayList<Entry>()
+        var entries2 = ArrayList<Entry>()
 
-    if (entries.isNotEmpty()) {
-            val dataSet = LineDataSet(entries, "Watt Gain Per Hour")
-            dataSet.setDrawFilled(true)
-            dataSet.color = Color.GREEN
-            dataSet.valueTextColor = Color.BLACK
-            dataSet.fillAlpha = 80
+        // Data for Line 1
+        entries1.add(Entry(0f, 10f)) // Start from 0f to align with the current hour
+        entries1.add(Entry(1f, 20f))
+        entries1.add(Entry(2f, 15f))
+        entries1.add(Entry(3f, 25f))
+        entries1.add(Entry(4f, 30f))
+        entries1.add(Entry(5f, 20f))
+        entries1.add(Entry(6f, 18f))
+        entries1.add(Entry(7f, 22f))
 
-            val startColor = Color.parseColor("#80FFFFFF") // Transparent green
-            val endColor = Color.parseColor("#8000FF00")   // Transparent white
-            val gradientColors = intArrayOf(startColor, endColor)
-            val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradientColors)
-            dataSet.fillDrawable = gradientDrawable
+        // Data for Line 2
+        entries2.add(Entry(0f, 15f)) // Example data points for Line 2
+        entries2.add(Entry(1f, 25f))
+        entries2.add(Entry(2f, 20f))
+        entries2.add(Entry(3f, 30f))
+        entries2.add(Entry(4f, 35f))
+        entries2.add(Entry(5f, 25f))
+        entries2.add(Entry(6f, 23f))
+        entries2.add(Entry(7f, 27f))
 
-            dataSet.setDrawCircles(true)
-            dataSet.setCircleColor(Color.GREEN)
-            dataSet.circleRadius = 3f
-            dataSet.setDrawValues(true)
+        if (entries1.isNotEmpty() && entries2.isNotEmpty()) {
+            // Creating datasets for both lines
+            var dataSet1 = LineDataSet(entries1, "Line 1")
+            dataSet1.color = Color.GREEN
+            dataSet1.valueTextColor = Color.BLACK
+            dataSet1.fillAlpha = 80
+            dataSet1.setDrawFilled(true)
+            dataSet1.fillDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(Color.parseColor("#80FFFFFF"), Color.parseColor("#8000FF00")))
+            dataSet1.setDrawCircles(true)
+            dataSet1.setCircleColor(Color.GREEN)
+            dataSet1.circleRadius = 3f
+            dataSet1.setDrawValues(true)
+            dataSet1.lineWidth = 3f
 
-            dataSet.lineWidth = 3f
+            var dataSet2 = LineDataSet(entries2, "Line 2")
+            dataSet2.color = Color.BLUE
+            dataSet2.valueTextColor = Color.BLACK
+            dataSet2.fillAlpha = 80
+            dataSet2.setDrawFilled(true)
+            dataSet2.setDrawCircles(true)
+            dataSet2.setCircleColor(Color.BLUE)
+            dataSet2.circleRadius = 3f
+            dataSet2.setDrawValues(true)
+            dataSet2.lineWidth = 3f
 
-            val lineData = LineData(dataSet)
+            // Creating LineData object with both datasets
+            var lineData = LineData(dataSet1, dataSet2)
+
             lineChart.data = lineData
 
             lineChart.apply {
@@ -112,7 +147,7 @@ class HomeActivity : AppCompatActivity() {
                 textSize = 12f
                 valueFormatter = object : ValueFormatter() {
                     override fun getFormattedValue(value: Float): String {
-                        val hour = (currentHour - entries.size + 1 + value.toInt()) % 24
+                        val hour = (currentHour - entries1.size + 1 + value.toInt()) % 24
                         val displayHour = if (hour < 0) hour + 24 else hour
                         return "%02d:00".format(displayHour)
                     }
@@ -139,16 +174,26 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun loadTempData() {
-        val tempRef = database.reference.child("temperature")
+        val tempRef = database.reference.child("Temperature")
         tempRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val temperature = snapshot.getValue(Double::class.java)
-                if (temperature != null) {
-                    val textViewSuhuValue = findViewById<TextView>(R.id.textViewSuhuValue)
-                    textViewSuhuValue.text = "$temperature C"
-                    Log.d("HomeActivity", "Temperature value: $temperature")
-                } else {
-                    Log.e("HomeActivity", "Failed to read temperature data: temperature is null")
+                // Log the raw data
+                Log.d("HomeActivity", "Raw temperature data: ${snapshot.value}")
+
+                // Loop through the children of the "Temperature" node
+                for (childSnapshot in snapshot.children) {
+                    try {
+                        val temperature = childSnapshot.getValue(Double::class.java)
+                        if (temperature != null) {
+                            val textViewSuhuValue = findViewById<TextView>(R.id.textViewSuhuValue)
+                            textViewSuhuValue.text = "$temperature C"
+                            Log.d("HomeActivity", "Temperature value: $temperature")
+                        } else {
+                            Log.e("HomeActivity", "Failed to read temperature data: Temperature is null")
+                        }
+                    } catch (e: DatabaseException) {
+                        Log.e("HomeActivity", "Failed to convert temperature data", e)
+                    }
                 }
             }
             override fun onCancelled(error: DatabaseError) {

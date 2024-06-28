@@ -33,17 +33,21 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
         val sumbuXValue = findViewById<TextView>(R.id.sumbu_x_value)
         val sumbuYValue = findViewById<TextView>(R.id.sumbu_y_value)
 
-        database.child("servo").addValueEventListener(object : ValueEventListener {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val targetX = dataSnapshot.child("targetX").getValue(Int::class.java) ?: 0
-                val targetY = dataSnapshot.child("targetY").getValue(Int::class.java) ?: 0
+                if (dataSnapshot.exists()) {
+                    val servoX = dataSnapshot.child("Servo X").getValue(Int::class.java) ?: 0
+                    val servoY = dataSnapshot.child("Servo Y").getValue(Int::class.java) ?: 0
 
-                sumbuXValue.text = targetX.toString()
-                sumbuYValue.text = targetY.toString()
+                    sumbuXValue.text = servoX.toString()
+                    sumbuYValue.text = servoY.toString()
+                } else {
+                    sumbuXValue.text = "0"
+                    sumbuYValue.text = "0"
+                }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(applicationContext, "Failed to load data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Failed to load data: ${databaseError.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
