@@ -57,20 +57,17 @@ class HomeActivity : AppCompatActivity() {
             Log.d("HomeActivity", "Application is connected to Firebase")
         }
 
-        // Setup buttons in the main.xml layout
+        // Setup buttons
         setupHomeButtons()
-        // Load Lux data from Firebase
-        loadLuxData()
-        // Load Temperature data
-        loadTempData()
         // Setup LineChart
         setupLineChart()
-        //Load arus data
-        loadLArusData()
-        //Load Daya data
-        loadLDayaData()
-    }
 
+        loadData("Temperature", R.id.textViewSuhuValue, "C")
+        loadData("Lux", R.id.textViewLuxValue, "Lux")
+        loadData("Arus", R.id.textViewArusValue, "A")
+        loadData("Daya", R.id.textViewDayaValue, "mW")
+
+    }
     private fun setupLineChart() {
         val lineChart = findViewById<LineChart>(R.id.line_chart)
         var entries1 = ArrayList<Entry>()
@@ -87,7 +84,7 @@ class HomeActivity : AppCompatActivity() {
         entries1.add(Entry(7f, 22f))
 
         // Data for Line 2
-        entries2.add(Entry(0f, 15f)) // Example data points for Line 2
+        entries2.add(Entry(0f, 15f))
         entries2.add(Entry(1f, 25f))
         entries2.add(Entry(2f, 20f))
         entries2.add(Entry(3f, 30f))
@@ -153,7 +150,6 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
             }
-
             lineChart.axisLeft.apply {
                 isEnabled = true
                 setDrawGridLines(false)
@@ -173,96 +169,56 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadTempData() {
-        val tempRef = database.reference.child("Temperature")
-        tempRef.addValueEventListener(object : ValueEventListener {
+    private fun loadData(sensorName: String, textViewId: Int, unit: String) {
+        val sensorRef = database.reference.child(sensorName)
+        sensorRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val suhu = snapshot.getValue(Double::class.java)
-                    if (suhu != null) {
-                        val textViewLuxValue = findViewById<TextView>(R.id.textViewSuhuValue)
-                        textViewLuxValue.text = "$suhu C"
-                        Log.d("HomeActivity", "Lux value: $suhu")
-                    } else {
-                        Log.e("HomeActivity", "Failed to read Temperature data: lt is null")
+                    when (unit) {
+                        "C" -> {
+                            val value = snapshot.getValue(Double::class.java)
+                            if (value != null) {
+                                updateTextView(textViewId, "$value $unit")
+                                Log.d("HomeActivity", "$sensorName value: $value $unit")
+                            } else {
+                                Log.e("HomeActivity", "Failed to read $sensorName data: value is null")
+                            }
+                        }
+                        "Lux" -> {
+                            val value = snapshot.getValue(Long::class.java)
+                            if (value != null) {
+                                updateTextView(textViewId, "$value $unit")
+                                Log.d("HomeActivity", "$sensorName value: $value $unit")
+                            } else {
+                                Log.e("HomeActivity", "Failed to read $sensorName data: value is null")
+                            }
+                        }
+                        "A", "mW" -> {
+                            val value = snapshot.getValue(Double::class.java)
+                            if (value != null) {
+                                updateTextView(textViewId, "$value $unit")
+                                Log.d("HomeActivity", "$sensorName value: $value $unit")
+                            } else {
+                                Log.e("HomeActivity", "Failed to read $sensorName data: value is null")
+                            }
+                        }
+                        else -> {
+                            Log.e("HomeActivity", "Invalid unit: $unit")
+                        }
                     }
                 } else {
-                    Log.e("HomeActivity", "Temperature node does not exist")
+                    Log.e("HomeActivity", "$sensorName node does not exist")
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeActivity", "Failed to read Temprerature data", error.toException())
+                Log.e("HomeActivity", "Failed to read $sensorName data", error.toException())
             }
         })
     }
 
-    private fun loadLuxData() {
-        val luxRef = database.reference.child("Lux")
-        luxRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    val lux = snapshot.getValue(Long::class.java)
-                    if (lux != null) {
-                        val textViewLuxValue = findViewById<TextView>(R.id.textViewLuxValue)
-                        textViewLuxValue.text = "$lux Lux"
-                        Log.d("HomeActivity", "Lux value: $lux")
-                    } else {
-                        Log.e("HomeActivity", "Failed to read Lux data: lt is null")
-                    }
-                } else {
-                    Log.e("HomeActivity", "Lux node does not exist")
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeActivity", "Failed to read Lux data", error.toException())
-            }
-        })
-    }
-
-    private fun loadLArusData() {
-        val arusRef = database.reference.child("Arus")
-        arusRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    val arus = snapshot.getValue(Double::class.java)
-                    if (arus != null) {
-                        val textViewarusValue = findViewById<TextView>(R.id.textViewArusValue)
-                        textViewarusValue.text = "$arus A"
-                        Log.d("HomeActivity", "arus value: $arus")
-                    } else {
-                        Log.e("HomeActivity", "Failed to read arus data: lt is null")
-                    }
-                } else {
-                    Log.e("HomeActivity", "arus node does not exist")
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeActivity", "Failed to read arus data", error.toException())
-            }
-        })
-    }
-
-    private fun loadLDayaData() {
-        val dayaRef = database.reference.child("Daya")
-        dayaRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    val daya = snapshot.getValue(Double::class.java)
-                    if (daya != null) {
-                        val textViewdayaValue = findViewById<TextView>(R.id.textViewDayaValue)
-                        textViewdayaValue.text = "$daya mW"
-                        Log.d("HomeActivity", "daya value: $daya")
-                    } else {
-                        Log.e("HomeActivity", "Failed to read daya data: lt is null")
-                    }
-                } else {
-                    Log.e("HomeActivity", "daya node does not exist")
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeActivity", "Failed to read daya data", error.toException())
-            }
-        })
+    private fun updateTextView(textViewId: Int, text: String) {
+        findViewById<TextView>(textViewId)?.text = text
     }
 
     private fun setupHomeButtons() {
@@ -271,7 +227,6 @@ class HomeActivity : AppCompatActivity() {
             switchToControlLayout()
         }
     }
-
     private fun switchToControlLayout() {
         startActivity(Intent(this, ControlActivity::class.java))
         finish()

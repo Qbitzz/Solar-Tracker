@@ -40,6 +40,6 @@
     </application>
 
     <!-- Feature declarations for Bluetooth -->
-    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
 
 </manifest>
