@@ -1,8 +1,6 @@
 package com.example.ta
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -11,8 +9,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -37,7 +33,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("HomeActivity", "onCreate() called")
-        setContentView(R.layout.home)
+        setContentView(R.layout.home) // Set the layout for this activity
 
         // Initialize Firebase
         database = Firebase.database
@@ -70,8 +66,8 @@ class HomeActivity : AppCompatActivity() {
     }
     private fun setupLineChart() {
         val lineChart = findViewById<LineChart>(R.id.line_chart)
-        var entries1 = ArrayList<Entry>()
-        var entries2 = ArrayList<Entry>()
+        val entries1 = ArrayList<Entry>()
+        val entries2 = ArrayList<Entry>()
 
         // Data for Line 1
         entries1.add(Entry(0f, 10f)) // Start from 0f to align with the current hour
@@ -95,7 +91,7 @@ class HomeActivity : AppCompatActivity() {
 
         if (entries1.isNotEmpty() && entries2.isNotEmpty()) {
             // Creating datasets for both lines
-            var dataSet1 = LineDataSet(entries1, "Line 1")
+            val dataSet1 = LineDataSet(entries1, "Line 1")
             dataSet1.color = Color.GREEN
             dataSet1.valueTextColor = Color.BLACK
             dataSet1.fillAlpha = 80
@@ -107,7 +103,7 @@ class HomeActivity : AppCompatActivity() {
             dataSet1.setDrawValues(true)
             dataSet1.lineWidth = 3f
 
-            var dataSet2 = LineDataSet(entries2, "Line 2")
+            val dataSet2 = LineDataSet(entries2, "Line 2")
             dataSet2.color = Color.BLUE
             dataSet2.valueTextColor = Color.BLACK
             dataSet2.fillAlpha = 80
@@ -119,7 +115,7 @@ class HomeActivity : AppCompatActivity() {
             dataSet2.lineWidth = 3f
 
             // Creating LineData object with both datasets
-            var lineData = LineData(dataSet1, dataSet2)
+            val lineData = LineData(dataSet1, dataSet2)
 
             lineChart.data = lineData
 
