@@ -1,8 +1,6 @@
 package com.example.ta
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -11,8 +9,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -66,8 +62,8 @@ class HomeActivity : AppCompatActivity() {
         loadData("Lux", R.id.textViewLuxValue, "Lux")
         loadData("Arus", R.id.textViewArusValue, "A")
         loadData("Daya", R.id.textViewDayaValue, "mW")
-
     }
+
     private fun setupLineChart() {
         val lineChart = findViewById<LineChart>(R.id.line_chart)
         var entries1 = ArrayList<Entry>()
@@ -222,13 +218,46 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupHomeButtons() {
+        val btnHome = findViewById<Button>(R.id.btn_home)
+        btnHome.setOnClickListener {
+            switchToHomeLayout()
+        }
+
         val btnControl = findViewById<Button>(R.id.btn_control)
         btnControl.setOnClickListener {
             switchToControlLayout()
         }
+
+        val btnProfile = findViewById<Button>(R.id.btn_profile)
+        btnProfile.setOnClickListener {
+            switchToProfileLayout()
+        }
+
+        val btnResult = findViewById<Button>(R.id.btn_result)
+        btnResult.setOnClickListener {
+            switchToResultLayout()
+        }
     }
+
+    private fun switchToHomeLayout() {
+        // Logic to switch to home layout
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
+    }
+
     private fun switchToControlLayout() {
         startActivity(Intent(this, ControlActivity::class.java))
         finish()
+    }
+
+    private fun switchToProfileLayout() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+        finish()
+    }
+
+    private fun switchToResultLayout() {
+        // Add logic to switch to the result activity
+        // startActivity(Intent(this, ResultActivity::class.java))
+        // finish()
     }
 }

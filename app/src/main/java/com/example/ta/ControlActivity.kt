@@ -53,8 +53,11 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupControlButtons() {
-        findViewById<Button>(R.id.btn_home).setOnClickListener(this)
+        findViewById<Button>(R.id.btn_profile).setOnClickListener(this)
         findViewById<Button>(R.id.btn_back).setOnClickListener(this)
+        findViewById<Button>(R.id.btn_home).setOnClickListener(this)
+        findViewById<Button>(R.id.btn_result).setOnClickListener(this)
+        findViewById<Button>(R.id.btn_control).setOnClickListener(this)
 
         // Find and Set a click listener LinearLayout with id atas
         findViewById<LinearLayout>(R.id.atas).setOnClickListener(this)
@@ -71,8 +74,11 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.btn_home -> switchToProfileLayout()
+            R.id.btn_profile -> switchToProfileLayout()
             R.id.btn_back -> switchToHomeLayout()
+            R.id.btn_home -> switchToHomeLayout()
+            R.id.btn_result -> switchToResultLayout()
+            R.id.btn_control -> switchToControlLayout()
             R.id.atas -> updateServo("Servo X", 5)
             R.id.bawah -> updateServo("Servo X", -5)
             R.id.kiri -> updateServo("Servo Y", 5)
@@ -98,6 +104,17 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     private fun switchToHomeLayout() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
+    }
+
+    private fun switchToControlLayout() {
+        startActivity(Intent(this, ControlActivity::class.java))
+        finish()
+    }
+
+    private fun switchToResultLayout() {
+        // Add logic to switch to the result activity
+        // startActivity(Intent(this, ResultActivity::class.java))
+        // finish()
     }
 
     private fun showToast(message: String) {
