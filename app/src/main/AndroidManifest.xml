@@ -24,7 +24,7 @@
 
         <!-- Set SignInActivity as the launcher activity -->
         <activity
-            android:name=".SignInActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:configChanges="uiMode">
             <intent-filter>

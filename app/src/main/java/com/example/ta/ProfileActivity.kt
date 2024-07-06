@@ -40,7 +40,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun switchToSignInLayout() {
-        startActivity(Intent(this, SignInActivity::class.java))
+        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 
