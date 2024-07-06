@@ -107,8 +107,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun switchToControlLayout() {
-        startActivity(Intent(this, ControlActivity::class.java))
-        finish()
+        // Current activity , no need to switch
     }
 
     private fun switchToResultLayout() {

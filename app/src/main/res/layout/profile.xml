@@ -106,12 +106,12 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:background="@color/darkblue"
-        android:padding="10dp">
+        android:padding="7dp">
 
         <Button
             android:id="@+id/btn_home"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/hbutton" />
 
         <Space
@@ -120,8 +120,8 @@
 
         <Button
             android:id="@+id/btn_result"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/chartbutton" />
 
         <Space
@@ -130,8 +130,8 @@
 
         <Button
             android:id="@+id/btn_control"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/cobutton" />
 
         <Space
@@ -140,8 +140,8 @@
 
         <Button
             android:id="@+id/btn_profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/pbutton" />
     </LinearLayout>
 

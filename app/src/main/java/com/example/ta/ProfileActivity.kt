@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +21,9 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         // Set up buttons
         setupProfileButtons()
+
+        // Display the current user's email
+        displayUserEmail()
     }
 
     private fun setupProfileButtons() {
@@ -62,12 +63,20 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun switchToProfileLayout() {
-        // Current activity is ProfileActivity, no need to switch
+        // Current activity, no need to switch
     }
 
     private fun logoutUser() {
         auth.signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
+    }
+
+    private fun displayUserEmail() {
+        val user = auth.currentUser
+        user?.let {
+            val email = user.email
+            findViewById<TextView>(R.id.username).text = email
+        }
     }
 }

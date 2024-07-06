@@ -240,9 +240,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun switchToHomeLayout() {
-        // Logic to switch to home layout
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
+        // Current activity , no need to switch
     }
 
     private fun switchToControlLayout() {
