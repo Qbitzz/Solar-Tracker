@@ -72,11 +72,21 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_home, R.id.btn_back -> switchToHomeLayout()
-            R.id.atas -> showToast("LinearLayout Atas Clicked")
-            R.id.kiri -> showToast("ImageView Kiri Clicked")
-            R.id.kanan -> showToast("ImageView Kanan Clicked")
-            R.id.bawah -> showToast("LinearLayout Bawah Clicked")
+            R.id.atas -> updateServo("Servo X", 5)
+            R.id.bawah -> updateServo("Servo X", -5)
+            R.id.kiri -> updateServo("Servo Y", 5)
+            R.id.kanan -> updateServo("Servo Y", -5)
         }
+    }
+
+    private fun updateServo(servo: String, value: Int) {
+        database.child("solarTracker/control").child(servo).setValue(value)
+            .addOnSuccessListener {
+                showToast("Updated $servo with value $value")
+            }
+            .addOnFailureListener {
+                showToast("Failed to update $servo: ${it.message}")
+            }
     }
 
     private fun switchToHomeLayout() {
