@@ -71,7 +71,8 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.btn_home, R.id.btn_back -> switchToHomeLayout()
+            R.id.btn_home -> switchToProfileLayout()
+            R.id.btn_back -> switchToHomeLayout()
             R.id.atas -> updateServo("Servo X", 5)
             R.id.bawah -> updateServo("Servo X", -5)
             R.id.kiri -> updateServo("Servo Y", 5)
@@ -87,6 +88,11 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             .addOnFailureListener {
                 showToast("Failed to update $servo: ${it.message}")
             }
+    }
+
+    private fun switchToProfileLayout() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+        finish()
     }
 
     private fun switchToHomeLayout() {
