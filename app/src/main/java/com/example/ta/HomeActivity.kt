@@ -1,7 +1,6 @@
 package com.example.ta
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -19,20 +18,18 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var database: FirebaseDatabase
     private lateinit var bluetoothManager: BluetoothManager
-
-    companion object {
-        private const val REQUEST_ENABLE_BLUETOOTH = 1
-    }
+    private lateinit var lineChart: LineChart
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("HomeActivity", "onCreate() called")
         setContentView(R.layout.home)
 
         // Initialize Firebase
@@ -41,23 +38,18 @@ class HomeActivity : AppCompatActivity() {
         // Initialize BluetoothManager
         bluetoothManager = BluetoothManager(this)
 
-        // Check Bluetooth permissions
-        bluetoothManager.requestBluetoothPermission()
-
-        // Check if the application is connected to Firebase
-        if (FirebaseApp.getInstance() == null) {
-            // Application is not connected to Firebase
-            Log.e("HomeActivity", "Application is not connected to Firebase")
-        } else {
-            // Application is connected to Firebase
-            Log.d("HomeActivity", "Application is connected to Firebase")
+        // Request to enable Bluetooth if it's not enabled
+        if (!bluetoothManager.isBluetoothEnabled()) {
+            bluetoothManager.requestEnableBluetooth(this)
         }
 
-        // Setup buttons
+        // Request Bluetooth permissions necessary for your app
+        bluetoothManager.requestBluetoothPermissions(this)
+
         setupHomeButtons()
-        // Setup LineChart
         setupLineChart()
 
+        // Load data dynamically from Firebase
         loadData("Temperature", R.id.textViewSuhuValue, "C")
         loadData("Lux", R.id.textViewLuxValue, "Lux")
         loadData("Arus", R.id.textViewArusValue, "A")
@@ -65,104 +57,101 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupLineChart() {
-        val lineChart = findViewById<LineChart>(R.id.line_chart)
-        var entries1 = ArrayList<Entry>()
-        var entries2 = ArrayList<Entry>()
+        lineChart = findViewById(R.id.line_chart)
+        val entries = ArrayList<Entry>()
 
-        // Data for Line 1
-        entries1.add(Entry(0f, 10f)) // Start from 0f to align with the current hour
-        entries1.add(Entry(1f, 20f))
-        entries1.add(Entry(2f, 15f))
-        entries1.add(Entry(3f, 25f))
-        entries1.add(Entry(4f, 30f))
-        entries1.add(Entry(5f, 20f))
-        entries1.add(Entry(6f, 18f))
-        entries1.add(Entry(7f, 22f))
+        val dataSet = LineDataSet(entries, "Sensor Data")
+        configureDataSet(dataSet, Color.GREEN)
 
-        // Data for Line 2
-        entries2.add(Entry(0f, 15f))
-        entries2.add(Entry(1f, 25f))
-        entries2.add(Entry(2f, 20f))
-        entries2.add(Entry(3f, 30f))
-        entries2.add(Entry(4f, 35f))
-        entries2.add(Entry(5f, 25f))
-        entries2.add(Entry(6f, 23f))
-        entries2.add(Entry(7f, 27f))
+        lineChart.data = LineData(dataSet)
+        configureLineChart()
+        loadChartData(entries, dataSet)
+    }
 
-        if (entries1.isNotEmpty() && entries2.isNotEmpty()) {
-            // Creating datasets for both lines
-            var dataSet1 = LineDataSet(entries1, "Line 1")
-            dataSet1.color = Color.GREEN
-            dataSet1.valueTextColor = Color.BLACK
-            dataSet1.fillAlpha = 80
-            dataSet1.setDrawFilled(true)
-            dataSet1.fillDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(Color.parseColor("#80FFFFFF"), Color.parseColor("#8000FF00")))
-            dataSet1.setDrawCircles(true)
-            dataSet1.setCircleColor(Color.GREEN)
-            dataSet1.circleRadius = 3f
-            dataSet1.setDrawValues(true)
-            dataSet1.lineWidth = 3f
+    private fun configureDataSet(dataSet: LineDataSet, color: Int) {
+        dataSet.color = color
+        dataSet.valueTextColor = Color.BLACK
+        dataSet.fillAlpha = 80
+        dataSet.setDrawFilled(true)
+        dataSet.fillDrawable = GradientDrawable(
+            GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(Color.parseColor("#80FFFFFF"), color)
+        )
+        dataSet.setDrawCircles(true)
+        dataSet.setCircleColor(color)
+        dataSet.circleRadius = 3f
+        dataSet.setDrawValues(true)
+        dataSet.lineWidth = 3f
+    }
 
-            var dataSet2 = LineDataSet(entries2, "Line 2")
-            dataSet2.color = Color.BLUE
-            dataSet2.valueTextColor = Color.BLACK
-            dataSet2.fillAlpha = 80
-            dataSet2.setDrawFilled(true)
-            dataSet2.setDrawCircles(true)
-            dataSet2.setCircleColor(Color.BLUE)
-            dataSet2.circleRadius = 3f
-            dataSet2.setDrawValues(true)
-            dataSet2.lineWidth = 3f
-
-            // Creating LineData object with both datasets
-            var lineData = LineData(dataSet1, dataSet2)
-
-            lineChart.data = lineData
-
-            lineChart.apply {
-                description.isEnabled = false
-                legend.isEnabled = false
-                setPinchZoom(true)
-                setDoubleTapToZoomEnabled(false)
-                setTouchEnabled(true)
-            }
-
-            val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-            val isDarkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
-            lineChart.xAxis.apply {
-                isEnabled = true
-                setDrawGridLines(false)
-                position = XAxis.XAxisPosition.BOTTOM
-                labelCount = 10
-                setGranularityEnabled(true)
-                textColor = if (isDarkMode) Color.WHITE else Color.BLACK
-                textSize = 12f
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        val hour = (currentHour - entries1.size + 1 + value.toInt()) % 24
-                        val displayHour = if (hour < 0) hour + 24 else hour
-                        return "%02d:00".format(displayHour)
-                    }
+    private fun configureLineChart() {
+        lineChart.description.isEnabled = false
+        lineChart.legend.isEnabled = true
+        lineChart.setPinchZoom(true)
+        lineChart.setDoubleTapToZoomEnabled(true)
+        lineChart.setTouchEnabled(true)
+        lineChart.xAxis.apply {
+            isEnabled = true
+            setDrawGridLines(false)
+            position = XAxis.XAxisPosition.BOTTOM
+            labelCount = 8
+            setGranularity(1f)
+            textColor = Color.BLACK
+            textSize = 12f
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    val hour = value.toInt() % 24
+                    return String.format("%02d:00", hour)
                 }
             }
-            lineChart.axisLeft.apply {
-                isEnabled = true
-                setDrawGridLines(false)
-                textColor = if (isDarkMode) Color.WHITE else Color.BLACK
-                textSize = 12f
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return "${value.toInt()}W"
-                    }
-                }
-            }
-            lineChart.axisRight.isEnabled = false
-
-            lineChart.invalidate()
-        } else {
-            Log.e("HomeActivity", "No data available for the chart")
         }
+        lineChart.axisLeft.apply {
+            isEnabled = true
+            setDrawGridLines(true)
+            textColor = Color.BLACK
+            textSize = 12f
+        }
+        lineChart.axisRight.isEnabled = false
+    }
+
+    private fun loadChartData(entries: ArrayList<Entry>, dataSet: LineDataSet) {
+        val arusRef = database.reference
+        arusRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val hourlyData = mutableMapOf<Int, Float>()
+                val formatter = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault())
+
+                snapshot.children.forEach { child ->
+                    try {
+                        val timestamp = child.key?.let { formatter.parse(it) }
+                        val arusValue = child.child("Arus").getValue(Float::class.java)
+                        if (timestamp != null && arusValue != null) {
+                            val calendar = Calendar.getInstance()
+                            calendar.time = timestamp
+                            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+
+                            // Aggregate values per hour
+                            hourlyData[hour] = (hourlyData[hour] ?: 0f) + arusValue * -1
+                        }
+                    } catch (e: Exception) {
+                        Log.e("HomeActivity", "Error parsing data", e)
+                    }
+                }
+
+                entries.clear()
+                hourlyData.entries.sortedBy { it.key }.takeLast(12).forEachIndexed { index, entry ->
+                    entries.add(Entry(entry.key.toFloat(), entry.value))
+                }
+
+                dataSet.notifyDataSetChanged()
+                lineChart.data.notifyDataChanged()
+                lineChart.notifyDataSetChanged()
+                lineChart.invalidate()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("HomeActivity", "Failed to load chart data", error.toException())
+            }
+        })
     }
 
     private fun loadData(sensorName: String, textViewId: Int, unit: String) {
@@ -170,40 +159,18 @@ class HomeActivity : AppCompatActivity() {
         sensorRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    when (unit) {
-                        "C" -> {
-                            val value = snapshot.getValue(Double::class.java)
-                            if (value != null) {
-                                updateTextView(textViewId, "$value $unit")
-                                Log.d("HomeActivity", "$sensorName value: $value $unit")
-                            } else {
-                                Log.e("HomeActivity", "Failed to read $sensorName data: value is null")
-                            }
-                        }
-                        "Lux" -> {
-                            val value = snapshot.getValue(Long::class.java)
-                            if (value != null) {
-                                updateTextView(textViewId, "$value $unit")
-                                Log.d("HomeActivity", "$sensorName value: $value $unit")
-                            } else {
-                                Log.e("HomeActivity", "Failed to read $sensorName data: value is null")
-                            }
-                        }
-                        "A", "mW" -> {
-                            val value = snapshot.getValue(Double::class.java)
-                            if (value != null) {
-                                updateTextView(textViewId, "$value $unit")
-                                Log.d("HomeActivity", "$sensorName value: $value $unit")
-                            } else {
-                                Log.e("HomeActivity", "Failed to read $sensorName data: value is null")
-                            }
-                        }
-                        else -> {
-                            Log.e("HomeActivity", "Invalid unit: $unit")
-                        }
+                    val value = snapshot.value
+                    val displayText = when (value) {
+                        is Long -> "$value $unit"
+                        is Double -> "$value $unit"
+                        is String -> value
+                        else -> "Invalid data"
                     }
+                    updateTextView(textViewId, displayText)
+                    Log.d("HomeActivity", "$sensorName value: $displayText")
                 } else {
                     Log.e("HomeActivity", "$sensorName node does not exist")
+                    updateTextView(textViewId, "Data not available")
                 }
             }
 
@@ -214,33 +181,18 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateTextView(textViewId: Int, text: String) {
-        findViewById<TextView>(textViewId)?.text = text
+        findViewById<TextView>(textViewId).text = text
     }
 
     private fun setupHomeButtons() {
-        val btnHome = findViewById<Button>(R.id.btn_home)
-        btnHome.setOnClickListener {
-            switchToHomeLayout()
-        }
-
-        val btnControl = findViewById<Button>(R.id.btn_control)
-        btnControl.setOnClickListener {
-            switchToControlLayout()
-        }
-
-        val btnProfile = findViewById<Button>(R.id.btn_profile)
-        btnProfile.setOnClickListener {
-            switchToProfileLayout()
-        }
-
-        val btnResult = findViewById<Button>(R.id.btn_result)
-        btnResult.setOnClickListener {
-            switchToResultLayout()
-        }
+        findViewById<Button>(R.id.btn_home).setOnClickListener { switchToHomeLayout() }
+        findViewById<Button>(R.id.btn_control).setOnClickListener { switchToControlLayout() }
+        findViewById<Button>(R.id.btn_profile).setOnClickListener { switchToProfileLayout() }
+        findViewById<Button>(R.id.btn_result).setOnClickListener { switchToResultLayout() }
     }
 
     private fun switchToHomeLayout() {
-        // Current activity , no need to switch
+        // Handle switching to home layout if needed
     }
 
     private fun switchToControlLayout() {
@@ -254,8 +206,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun switchToResultLayout() {
-        // Add logic to switch to the result activity
-        // startActivity(Intent(this, ResultActivity::class.java))
-        // finish()
+        // Start result activity, implement if necessary
     }
 }
