@@ -66,6 +66,15 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp">
 
+                <!-- Date Picker Button -->
+                <Button
+                    android:id="@+id/btn_select_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Date"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"/>
+
                 <!-- Add a line chart above Arus card view -->
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/line_chart"

@@ -1,5 +1,6 @@
 package com.example.ta
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -8,16 +9,20 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -27,6 +32,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var bluetoothManager: BluetoothManager
     private lateinit var lineChart: LineChart
+    private var selectedDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,32 @@ class HomeActivity : AppCompatActivity() {
         loadData("Lux", R.id.textViewLuxValue, "Lux")
         loadData("Arus", R.id.textViewArusValue, "A")
         loadData("Daya", R.id.textViewDayaValue, "mW")
+
+        // Setup Date Picker Button
+        findViewById<Button>(R.id.btn_select_date).setOnClickListener {
+            showDatePickerDialog()
+        }
+    }
+
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                selectedDate = String.format(
+                    "%04d-%02d-%02d",
+                    selectedYear,
+                    selectedMonth + 1,
+                    selectedDay
+                )
+                loadChartData(selectedDate)
+            },
+            year, month, day
+        ).show()
     }
 
     private fun setupLineChart() {
@@ -65,7 +97,7 @@ class HomeActivity : AppCompatActivity() {
 
         lineChart.data = LineData(dataSet)
         configureLineChart()
-        loadChartData(entries, dataSet)
+        loadChartData(null)
     }
 
     private fun configureDataSet(dataSet: LineDataSet, color: Int) {
@@ -113,45 +145,55 @@ class HomeActivity : AppCompatActivity() {
         lineChart.axisRight.isEnabled = false
     }
 
-    private fun loadChartData(entries: ArrayList<Entry>, dataSet: LineDataSet) {
-        val arusRef = database.reference
-        arusRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val hourlyData = mutableMapOf<Int, Float>()
+    private fun loadChartData(date: String?) {
+        val dayaRef = database.reference
+        lifecycleScope.launch {
+            val entries = ArrayList<Entry>()
+            val hourlyData = withContext(Dispatchers.IO) {
+                val data = mutableMapOf<Int, MutableList<Float>>()
                 val formatter = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault())
 
-                snapshot.children.forEach { child ->
-                    try {
-                        val timestamp = child.key?.let { formatter.parse(it) }
-                        val arusValue = child.child("Arus").getValue(Float::class.java)
-                        if (timestamp != null && arusValue != null) {
-                            val calendar = Calendar.getInstance()
-                            calendar.time = timestamp
-                            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                dayaRef.get().addOnSuccessListener { snapshot ->
+                    snapshot.children.forEach { child ->
+                        val key = child.key
+                        if (key != null && key.matches(Regex("\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}"))) {
+                            try {
+                                val timestamp = formatter.parse(key)
+                                val dayaValue = child.child("Daya").getValue(Float::class.java)
+                                if (timestamp != null && dayaValue != null) {
+                                    val calendar = Calendar.getInstance()
+                                    calendar.time = timestamp
+                                    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                                    val dataDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(timestamp)
 
-                            // Aggregate values per hour
-                            hourlyData[hour] = (hourlyData[hour] ?: 0f) + arusValue * -1
+                                    if (date == null || dataDate == date) {
+                                        data.getOrPut(hour) { mutableListOf() }.add(dayaValue)
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.e("HomeActivity", "Error parsing data", e)
+                            }
                         }
-                    } catch (e: Exception) {
-                        Log.e("HomeActivity", "Error parsing data", e)
                     }
-                }
-
-                entries.clear()
-                hourlyData.entries.sortedBy { it.key }.takeLast(12).forEachIndexed { index, entry ->
-                    entries.add(Entry(entry.key.toFloat(), entry.value))
-                }
-
-                dataSet.notifyDataSetChanged()
-                lineChart.data.notifyDataChanged()
-                lineChart.notifyDataSetChanged()
-                lineChart.invalidate()
+                }.await()
+                data
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("HomeActivity", "Failed to load chart data", error.toException())
+            entries.clear()
+            hourlyData.entries.sortedBy { it.key }.takeLast(12).forEach { entry ->
+                val averageValue = entry.value.sum() / entry.value.size
+                entries.add(Entry(entry.key.toFloat(), averageValue))
             }
-        })
+
+            val dataSet = (lineChart.data.getDataSetByIndex(0) as LineDataSet).apply {
+                values = entries
+            }
+
+            dataSet.notifyDataSetChanged()
+            lineChart.data.notifyDataChanged()
+            lineChart.notifyDataSetChanged()
+            lineChart.invalidate()
+        }
     }
 
     private fun loadData(sensorName: String, textViewId: Int, unit: String) {
