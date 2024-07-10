@@ -65,6 +65,10 @@ class HomeActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_select_date).setOnClickListener {
             showDatePickerDialog()
         }
+
+        // Load current date data by default
+        selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        loadChartData(selectedDate)
     }
 
     private fun showDatePickerDialog() {
@@ -97,7 +101,6 @@ class HomeActivity : AppCompatActivity() {
 
         lineChart.data = LineData(dataSet)
         configureLineChart()
-        loadChartData(null)
     }
 
     private fun configureDataSet(dataSet: LineDataSet, color: Int) {
@@ -180,7 +183,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
             entries.clear()
-            hourlyData.entries.sortedBy { it.key }.takeLast(12).forEach { entry ->
+            hourlyData.entries.sortedBy { it.key }.forEach { entry ->
                 val averageValue = entry.value.sum() / entry.value.size
                 entries.add(Entry(entry.key.toFloat(), averageValue))
             }
