@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "745730408852",
-    "firebase_url": "https://esp32-f9fad-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "esp32-f9fad",
-    "storage_bucket": "esp32-f9fad.appspot.com"
+    "project_number": "360822742459",
+    "firebase_url": "https://esp32new-db585-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "esp32new-db585",
+    "storage_bucket": "esp32new-db585.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:745730408852:android:371a11c2882901d7400f81",
+        "mobilesdk_app_id": "1:360822742459:android:a68c6ef2243dfba9f1789e",
         "android_client_info": {
           "package_name": "com.example.ta"
         }
       },
       "oauth_client": [
         {
-          "client_id": "745730408852-ta414jns30co2kf95c5f0dsrhbjnmli9.apps.googleusercontent.com",
+          "client_id": "360822742459-bfga1aaq1v6n8chgl4hh681dnij50u3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ta",
+            "certificate_hash": "c59948852e251066b9709685dfec319aaa6b0e30"
+          }
+        },
+        {
+          "client_id": "360822742459-1qe4ku8ecb3m8m6k4knoe17k0f99pdn8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCJJ5ROS_JfbXgwUHhLKY8v_uNV7Y6G3iw"
+          "current_key": "AIzaSyDOeIatWARydKZK8kmObnQSMlopZwMOmcM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "745730408852-ta414jns30co2kf95c5f0dsrhbjnmli9.apps.googleusercontent.com",
+              "client_id": "360822742459-1qe4ku8ecb3m8m6k4knoe17k0f99pdn8.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

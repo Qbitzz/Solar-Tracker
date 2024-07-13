@@ -1,6 +1,7 @@
 package com.example.ta
 
 import android.app.DatePickerDialog
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -252,5 +253,18 @@ class HomeActivity : AppCompatActivity() {
 
     private fun switchToResultLayout() {
         // Start result activity, implement if necessary
+    }
+
+    // Bluetooth Management
+    fun connectToDevice(device: BluetoothDevice): Boolean {
+        return bluetoothManager.connectToDevice(device)
+    }
+
+    fun sendMessage(message: String) {
+        bluetoothManager.sendMessage(message)
+    }
+
+    fun disconnectDevice() {
+        bluetoothManager.disconnect()
     }
 }
