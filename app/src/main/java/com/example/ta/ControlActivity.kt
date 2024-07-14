@@ -40,16 +40,14 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
         val sumbuXValue = findViewById<TextView>(R.id.sumbu_x_value)
         val sumbuYValue = findViewById<TextView>(R.id.sumbu_y_value)
 
-        database.orderByChild("Timestamp").limitToLast(1).addListenerForSingleValueEvent(object : ValueEventListener {
+        val servoDataListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (snapshot in dataSnapshot.children) {
-                        val servoX = snapshot.child("Servo X").getValue(Int::class.java) ?: 0
-                        val servoY = snapshot.child("Servo Y").getValue(Int::class.java) ?: 0
+                    val servoX = dataSnapshot.child("Servo X").getValue(Int::class.java) ?: 0
+                    val servoY = dataSnapshot.child("Servo Y").getValue(Int::class.java) ?: 0
 
-                        sumbuXValue.text = servoX.toString()
-                        sumbuYValue.text = servoY.toString()
-                    }
+                    sumbuXValue.text = servoX.toString()
+                    sumbuYValue.text = servoY.toString()
                 } else {
                     sumbuXValue.text = "0"
                     sumbuYValue.text = "0"
@@ -59,7 +57,9 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             override fun onCancelled(databaseError: DatabaseError) {
                 Toast.makeText(applicationContext, "Failed to load data: ${databaseError.message}", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
+
+        database.child("control").addValueEventListener(servoDataListener)
     }
 
     private fun fetchMode() {
@@ -96,19 +96,27 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (isManualMode) {
-            when (v.id) {
-                R.id.btn_profile -> switchToProfileLayout()
-                R.id.btn_back -> switchToHomeLayout()
-                R.id.btn_home -> switchToHomeLayout()
-                R.id.btn_control -> switchToControlLayout()
-                R.id.atas -> adjustServo("TempX", 5, 20, 120)
-                R.id.bawah -> adjustServo("TempX", -5, 20, 120)
-                R.id.kiri -> adjustServo("TempY", 5, 40, 140)
-                R.id.kanan -> adjustServo("TempY", -5, 40, 140)
+        when (v.id) {
+            R.id.btn_profile -> switchToProfileLayout()
+            R.id.btn_back -> switchToHomeLayout()
+            R.id.btn_home -> switchToHomeLayout()
+            R.id.btn_control -> switchToControlLayout()
+            R.id.atas -> {
+                if (isManualMode) adjustServo("TempY", 5, 20, 120)
+                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
             }
-        } else {
-            showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+            R.id.bawah -> {
+                if (isManualMode) adjustServo("TempY", -5, 20, 120)
+                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+            }
+            R.id.kiri -> {
+                if (isManualMode) adjustServo("TempX", -5, 40, 140)
+                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+            }
+            R.id.kanan -> {
+                if (isManualMode) adjustServo("TempX", 5, 40, 140)
+                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+            }
         }
     }
 
@@ -161,7 +169,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun switchToControlLayout() {
-        // Current activity , no need to switch
+        // Current activity, no need to switch
     }
 
     private fun showToast(message: String) {
