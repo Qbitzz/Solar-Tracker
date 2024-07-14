@@ -3,12 +3,7 @@ package com.example.ta
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Switch
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
 
@@ -16,6 +11,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var database: DatabaseReference
     private lateinit var modeSwitch: Switch
+    private var isManualMode: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +65,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     private fun fetchMode() {
         database.child("control/mode").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val isManualMode = dataSnapshot.getValue(Boolean::class.java) ?: false
+                isManualMode = dataSnapshot.getValue(Boolean::class.java) ?: false
                 modeSwitch.isChecked = !isManualMode
                 updateModeSwitchText(isManualMode)
             }
@@ -100,26 +96,41 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        when (v.id) {
-            R.id.btn_profile -> switchToProfileLayout()
-            R.id.btn_back -> switchToHomeLayout()
-            R.id.btn_home -> switchToHomeLayout()
-            R.id.btn_control -> switchToControlLayout()
-            R.id.atas -> updateServo("Servo X", 5)
-            R.id.bawah -> updateServo("Servo X", -5)
-            R.id.kiri -> updateServo("Servo Y", 5)
-            R.id.kanan -> updateServo("Servo Y", -5)
+        if (isManualMode) {
+            when (v.id) {
+                R.id.btn_profile -> switchToProfileLayout()
+                R.id.btn_back -> switchToHomeLayout()
+                R.id.btn_home -> switchToHomeLayout()
+                R.id.btn_control -> switchToControlLayout()
+                R.id.atas -> adjustServo("TempX", 5, 20, 120)
+                R.id.bawah -> adjustServo("TempX", -5, 20, 120)
+                R.id.kiri -> adjustServo("TempY", 5, 40, 140)
+                R.id.kanan -> adjustServo("TempY", -5, 40, 140)
+            }
+        } else {
+            showToast("Manual control is disabled. Switch to manual mode to control the servos.")
         }
     }
 
-    private fun updateServo(servo: String, value: Int) {
-        database.child("control").child(servo).setValue(value)
-            .addOnSuccessListener {
-                showToast("Updated $servo with value $value")
+    private fun adjustServo(servo: String, adjustment: Int, minValue: Int, maxValue: Int) {
+        val currentValueRef = database.child("control").child(servo)
+        currentValueRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val currentValue = dataSnapshot.getValue(Int::class.java) ?: 0
+                val newValue = (currentValue + adjustment).coerceIn(minValue, maxValue)
+                currentValueRef.setValue(newValue)
+                    .addOnSuccessListener {
+                        showToast("Updated $servo to $newValue")
+                    }
+                    .addOnFailureListener {
+                        showToast("Failed to update $servo: ${it.message}")
+                    }
             }
-            .addOnFailureListener {
-                showToast("Failed to update $servo: ${it.message}")
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                showToast("Failed to load data: ${databaseError.message}")
             }
+        })
     }
 
     private fun toggleMode(isAutoMode: Boolean) {
@@ -128,11 +139,13 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             .addOnSuccessListener {
                 showToast(if (isManualMode) "Switched to Manual" else "Switched to Auto")
                 updateModeSwitchText(isManualMode)
+                this.isManualMode = isManualMode
             }
             .addOnFailureListener {
                 showToast("Failed to toggle mode: ${it.message}")
             }
     }
+
     private fun updateModeSwitchText(isManualMode: Boolean) {
         modeSwitch.text = if (isManualMode) "Manual" else "Auto"
     }
