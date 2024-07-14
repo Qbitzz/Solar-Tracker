@@ -44,11 +44,11 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Home Button -->
+        <!-- Button -->
         <Button
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:background="@drawable/pbutton" />
+            android:background="@color/darkblue" />
 
     </LinearLayout>
 
