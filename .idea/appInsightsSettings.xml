@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.ta" />
-                  <option name="mobileSdkAppId" value="1:745730408852:android:371a11c2882901d7400f81" />
-                  <option name="projectId" value="esp32-f9fad" />
-                  <option name="projectNumber" value="745730408852" />
+                  <option name="mobileSdkAppId" value="1:360822742459:android:a68c6ef2243dfba9f1789e" />
+                  <option name="projectId" value="esp32new-db585" />
+                  <option name="projectNumber" value="360822742459" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

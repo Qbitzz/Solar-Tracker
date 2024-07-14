@@ -56,7 +56,6 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
         findViewById<Button>(R.id.btn_profile).setOnClickListener(this)
         findViewById<Button>(R.id.btn_back).setOnClickListener(this)
         findViewById<Button>(R.id.btn_home).setOnClickListener(this)
-        findViewById<Button>(R.id.btn_result).setOnClickListener(this)
         findViewById<Button>(R.id.btn_control).setOnClickListener(this)
 
         // Find and Set a click listener LinearLayout with id atas
@@ -77,7 +76,6 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_profile -> switchToProfileLayout()
             R.id.btn_back -> switchToHomeLayout()
             R.id.btn_home -> switchToHomeLayout()
-            R.id.btn_result -> switchToResultLayout()
             R.id.btn_control -> switchToControlLayout()
             R.id.atas -> updateServo("Servo X", 5)
             R.id.bawah -> updateServo("Servo X", -5)

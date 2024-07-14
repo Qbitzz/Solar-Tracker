@@ -35,7 +35,6 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupProfileButtons() {
         findViewById<Button>(R.id.btn_home).setOnClickListener(this)
-        findViewById<Button>(R.id.btn_result).setOnClickListener(this)
         findViewById<Button>(R.id.btn_control).setOnClickListener(this)
         findViewById<Button>(R.id.btn_profile).setOnClickListener(this)
         findViewById<Button>(R.id.btn_back).setOnClickListener(this)
@@ -46,7 +45,6 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_home -> switchToHomeLayout()
-            R.id.btn_result -> switchToResultLayout()
             R.id.btn_control -> switchToControlLayout()
             R.id.btn_profile -> switchToProfileLayout()
             R.id.btn_back -> switchToHomeLayout()
@@ -58,12 +56,6 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private fun switchToHomeLayout() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
-    }
-
-    private fun switchToResultLayout() {
-        // Add logic to switch to the result activity
-        // startActivity(Intent(this, ResultActivity::class.java))
-        // finish()
     }
 
     private fun switchToControlLayout() {

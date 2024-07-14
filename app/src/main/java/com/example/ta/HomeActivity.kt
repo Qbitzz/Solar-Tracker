@@ -234,7 +234,6 @@ class HomeActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_home).setOnClickListener { switchToHomeLayout() }
         findViewById<Button>(R.id.btn_control).setOnClickListener { switchToControlLayout() }
         findViewById<Button>(R.id.btn_profile).setOnClickListener { switchToProfileLayout() }
-        findViewById<Button>(R.id.btn_result).setOnClickListener { switchToResultLayout() }
     }
 
     private fun switchToHomeLayout() {
@@ -249,10 +248,6 @@ class HomeActivity : AppCompatActivity() {
     private fun switchToProfileLayout() {
         startActivity(Intent(this, ProfileActivity::class.java))
         finish()
-    }
-
-    private fun switchToResultLayout() {
-        // Start result activity, implement if necessary
     }
 
     // Bluetooth Management
