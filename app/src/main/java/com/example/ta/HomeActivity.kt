@@ -59,7 +59,7 @@ class HomeActivity : AppCompatActivity() {
         // Load data dynamically from Firebase
         loadData("Temperature", R.id.textViewSuhuValue, "C")
         loadData("Lux", R.id.textViewLuxValue, "Lux")
-        loadData("Arus", R.id.textViewArusValue, "A")
+        loadData("Arus", R.id.textViewArusValue, "A", true)
         loadData("Daya", R.id.textViewDayaValue, "mW")
 
         // Setup Date Picker Button
@@ -200,20 +200,20 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadData(sensorName: String, textViewId: Int, unit: String) {
-        val sensorRef = database.reference.child(sensorName)
+    private fun loadData(sensorName: String, textViewId: Int, unit: String, multiplyByMinusOne: Boolean = false) {
+        val sensorRef = database.reference.orderByChild("Timestamp").limitToLast(1)
         sensorRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val value = snapshot.value
-                    val displayText = when (value) {
-                        is Long -> "$value $unit"
-                        is Double -> "$value $unit"
-                        is String -> value
-                        else -> "Invalid data"
+                    for (child in snapshot.children) {
+                        var value = child.child(sensorName).getValue(Float::class.java) ?: 0f
+                        if (multiplyByMinusOne) {
+                            value *= -1
+                        }
+                        val displayText = "$value $unit"
+                        updateTextView(textViewId, displayText)
+                        Log.d("HomeActivity", "$sensorName value: $displayText")
                     }
-                    updateTextView(textViewId, displayText)
-                    Log.d("HomeActivity", "$sensorName value: $displayText")
                 } else {
                     Log.e("HomeActivity", "$sensorName node does not exist")
                     updateTextView(textViewId, "Data not available")
