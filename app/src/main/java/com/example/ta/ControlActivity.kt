@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import com.google.firebase.database.*
 class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var database: DatabaseReference
+    private lateinit var modeSwitch: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,11 +24,20 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
         // Initialize Firebase Database
         database = FirebaseDatabase.getInstance().reference
 
-        // Setup buttons in the control.xml layout
+        // Setup buttons and switch in the control.xml layout
         setupControlButtons()
+        setupModeSwitch()
 
         // Retrieve data from Firebase
         fetchSumbuData()
+        fetchMode()
+    }
+
+    private fun setupModeSwitch() {
+        modeSwitch = findViewById(R.id.switch_mode)
+        modeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            toggleMode(isChecked)
+        }
     }
 
     private fun fetchSumbuData() {
@@ -51,6 +62,20 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Toast.makeText(applicationContext, "Failed to load data: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchMode() {
+        database.child("solarTracker/control/mode").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val isManualMode = dataSnapshot.getValue(Boolean::class.java) ?: false
+                modeSwitch.isChecked = !isManualMode
+                updateModeSwitchText(isManualMode)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Toast.makeText(applicationContext, "Failed to load mode: ${databaseError.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -97,6 +122,21 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             }
     }
 
+    private fun toggleMode(isAutoMode: Boolean) {
+        val isManualMode = !isAutoMode
+        database.child("solarTracker/control/mode").setValue(isManualMode)
+            .addOnSuccessListener {
+                showToast(if (isManualMode) "Switched to Manual" else "Switched to Auto")
+                updateModeSwitchText(isManualMode)
+            }
+            .addOnFailureListener {
+                showToast("Failed to toggle mode: ${it.message}")
+            }
+    }
+    private fun updateModeSwitchText(isManualMode: Boolean) {
+        modeSwitch.text = if (isManualMode) "Manual" else "Auto"
+    }
+
     private fun switchToProfileLayout() {
         startActivity(Intent(this, ProfileActivity::class.java))
         finish()
@@ -109,12 +149,6 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun switchToControlLayout() {
         // Current activity , no need to switch
-    }
-
-    private fun switchToResultLayout() {
-        // Add logic to switch to the result activity
-        // startActivity(Intent(this, ResultActivity::class.java))
-        // finish()
     }
 
     private fun showToast(message: String) {
