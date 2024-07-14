@@ -67,7 +67,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun fetchMode() {
-        database.child("solarTracker/control/mode").addValueEventListener(object : ValueEventListener {
+        database.child("control/mode").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val isManualMode = dataSnapshot.getValue(Boolean::class.java) ?: false
                 modeSwitch.isChecked = !isManualMode
@@ -113,7 +113,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateServo(servo: String, value: Int) {
-        database.child("solarTracker/control").child(servo).setValue(value)
+        database.child("control").child(servo).setValue(value)
             .addOnSuccessListener {
                 showToast("Updated $servo with value $value")
             }
@@ -124,7 +124,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun toggleMode(isAutoMode: Boolean) {
         val isManualMode = !isAutoMode
-        database.child("solarTracker/control/mode").setValue(isManualMode)
+        database.child("control/mode").setValue(isManualMode)
             .addOnSuccessListener {
                 showToast(if (isManualMode) "Switched to Manual" else "Switched to Auto")
                 updateModeSwitchText(isManualMode)
