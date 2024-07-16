@@ -68,6 +68,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun loginUser() {
         val email = editTextEmail.text.toString()
         val password = editTextPassword.text.toString()
+        // Log email and password (for debugging purposes only, remove in production)
+        Log.w("LoginActivity", "Email: $email")
+        Log.w("LoginActivity", "Password: $password")
 
         if (email.isEmpty() || password.isEmpty()) {
             showToast("Email and Password cannot be empty")
@@ -82,7 +85,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     switchToHomeLayout()
                 } else {
                     // If sign in fails, display a message to the user.
-                    showToast("Authentication failed: ${task.exception?.message}")
+                    showToast("Authentication failed")
                 }
             }
     }

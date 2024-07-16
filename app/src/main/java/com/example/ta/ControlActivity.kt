@@ -40,6 +40,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
         val sumbuXValue = findViewById<TextView>(R.id.sumbu_x_value)
         val sumbuYValue = findViewById<TextView>(R.id.sumbu_y_value)
 
+        // Listener for servo data
         val servoDataListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -59,6 +60,7 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
+        // Attach the listener to the 'control' node in the database
         database.child("control").addValueEventListener(servoDataListener)
     }
 
@@ -103,19 +105,19 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_control -> switchToControlLayout()
             R.id.atas -> {
                 if (isManualMode) adjustServo("TempY", 5, 20, 120)
-                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+                else showToast("Manual control is disabled")
             }
             R.id.bawah -> {
                 if (isManualMode) adjustServo("TempY", -5, 20, 120)
-                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+                else showToast("Manual control is disabled")
             }
             R.id.kiri -> {
                 if (isManualMode) adjustServo("TempX", -5, 40, 140)
-                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+                else showToast("Manual control is disabled")
             }
             R.id.kanan -> {
                 if (isManualMode) adjustServo("TempX", 5, 40, 140)
-                else showToast("Manual control is disabled. Switch to manual mode to control the servos.")
+                else showToast("Manual control is disabled")
             }
         }
     }
@@ -145,7 +147,6 @@ class ControlActivity : AppCompatActivity(), View.OnClickListener {
         val isManualMode = !isAutoMode
         database.child("control/mode").setValue(isManualMode)
             .addOnSuccessListener {
-                showToast(if (isManualMode) "Switched to Manual" else "Switched to Auto")
                 updateModeSwitchText(isManualMode)
                 this.isManualMode = isManualMode
             }

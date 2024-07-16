@@ -55,9 +55,9 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Registration success, navigate to the main activity
+                    // Registration success, navigate to the login activity
                     showToast("Registration successful")
-                    switchToHomeLayout()
+                    switchToLoginLayout()
                 } else {
                     // If registration fails, display a message to the user.
                     showToast("Registration failed: ${task.exception?.message}")
@@ -65,9 +65,10 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
             }
     }
 
-    private fun switchToHomeLayout() {
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
+    private fun switchToLoginLayout() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 
     private fun showToast(message: String) {

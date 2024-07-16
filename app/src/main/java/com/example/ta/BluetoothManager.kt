@@ -17,6 +17,7 @@ import java.io.OutputStream
 import java.util.*
 
 class BluetoothManager(private val context: Context) {
+
     private val bluetoothAdapter: BluetoothAdapter? by lazy(LazyThreadSafetyMode.NONE) {
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as android.bluetooth.BluetoothManager
         bluetoothManager.adapter
@@ -40,7 +41,7 @@ class BluetoothManager(private val context: Context) {
             bluetoothAdapter?.let {
                 if (!it.isEnabled) {
                     val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                    activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH)
+                    ActivityCompat.startActivityForResult(activity, enableBtIntent, REQUEST_ENABLE_BLUETOOTH, null)
                 }
             } ?: run {
                 Log.e(TAG, "Bluetooth is not supported on this device")
