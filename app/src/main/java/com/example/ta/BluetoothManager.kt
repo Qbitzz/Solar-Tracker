@@ -81,11 +81,15 @@ class BluetoothManager(private val context: Context) {
     }
 
     fun sendMessage(message: String) {
+        sendBytes(message.toByteArray())
+    }
+
+    fun sendBytes(messageArray: ByteArray) {
         if (checkPermissions()) {
             try {
-                outputStream?.write(message.toByteArray())
+                outputStream?.write(messageArray)
                 outputStream?.flush()
-                Log.d(TAG, "Sent message: $message")
+                Log.d(TAG, "Sent message: ${messageArray.joinToString(",")}")
             } catch (e: IOException) {
                 Log.e(TAG, "Error sending message", e)
             }
@@ -102,6 +106,10 @@ class BluetoothManager(private val context: Context) {
         } catch (e: IOException) {
             Log.e(TAG, "Error disconnecting", e)
         }
+    }
+
+    fun getPairedDevices(): Set<BluetoothDevice>? {
+        return bluetoothAdapter?.bondedDevices
     }
 
     private fun checkPermissions(): Boolean {

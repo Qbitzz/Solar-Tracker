@@ -1,20 +1,25 @@
 package com.example.ta
 
-import android.content.Context
+import android.app.Activity
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 
-class ProfileActivity : AppCompatActivity(), View.OnClickListener {
+class ProfileActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
     private lateinit var bluetoothManager: BluetoothManager
+    private lateinit var ssidEditText: EditText
+    private lateinit var passwordEditText: EditText
+    private lateinit var usernameTextView: TextView
+    private lateinit var auth: FirebaseAuth
+    private var connectedDevice: BluetoothDevice? = null
+
+    companion object {
+        private const val REQUEST_CODE_SELECT_DEVICE = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,30 +31,75 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         // Initialize BluetoothManager
         bluetoothManager = BluetoothManager(this)
 
-        // Set up buttons
-        setupProfileButtons()
+        // Request to enable Bluetooth if it's not enabled
+        if (!bluetoothManager.isBluetoothEnabled()) {
+            bluetoothManager.requestEnableBluetooth(this)
+        }
 
-        // Display the current user's email
-        displayUserEmail()
+        // Request Bluetooth permissions necessary for your app
+        bluetoothManager.requestBluetoothPermissions(this)
+
+        ssidEditText = findViewById(R.id.editTextSSID)
+        passwordEditText = findViewById(R.id.editTextPassword)
+        usernameTextView = findViewById(R.id.username)
+
+        // Set username from email login
+        val currentUser = auth.currentUser
+        usernameTextView.text = currentUser?.email ?: "Username"
+
+        findViewById<Button>(R.id.btn_send_wifi_info).setOnClickListener {
+            sendWiFiInfo()
+        }
+
+        findViewById<Button>(R.id.btn_scan_devices).setOnClickListener {
+            val intent = Intent(this, DeviceListActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_SELECT_DEVICE)
+        }
+
+        findViewById<Button>(R.id.buttonLogout).setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
+        // Handle bottom navigation buttons
+        findViewById<Button>(R.id.btn_home).setOnClickListener { switchToHomeLayout() }
+        findViewById<Button>(R.id.btn_control).setOnClickListener { switchToControlLayout() }
+        findViewById<Button>(R.id.btn_profile).setOnClickListener { switchToProfileLayout() }
     }
 
-    private fun setupProfileButtons() {
-        findViewById<Button>(R.id.btn_home).setOnClickListener(this)
-        findViewById<Button>(R.id.btn_control).setOnClickListener(this)
-        findViewById<Button>(R.id.btn_profile).setOnClickListener(this)
-        findViewById<Button>(R.id.btn_back).setOnClickListener(this)
-        findViewById<Button>(R.id.buttonLogout).setOnClickListener(this)
-        findViewById<Button>(R.id.btn_send_wifi_info).setOnClickListener(this) // New button for sending WiFi info
+    private fun sendWiFiInfo() {
+        val ssid = ssidEditText.text.toString()
+        val password = passwordEditText.text.toString()
+
+        if (ssid.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "SSID and Password cannot be empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val messageArray = arrayOf(ssid, password).joinToString(";").toByteArray()
+        if (connectedDevice != null) {
+            bluetoothManager.sendBytes(messageArray)
+            Toast.makeText(this, "WiFi info sent", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "No device connected", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.btn_home -> switchToHomeLayout()
-            R.id.btn_control -> switchToControlLayout()
-            R.id.btn_profile -> switchToProfileLayout()
-            R.id.btn_back -> switchToHomeLayout()
-            R.id.buttonLogout -> logoutUser()
-            R.id.btn_send_wifi_info -> sendWifiInfo() // New case for sending WiFi info
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SELECT_DEVICE && resultCode == Activity.RESULT_OK) {
+            val deviceAddress = data?.getStringExtra("device_address")
+            deviceAddress?.let {
+                connectedDevice = bluetoothManager.getPairedDevices()?.firstOrNull { it.address == deviceAddress }
+                connectedDevice?.let {
+                    if (bluetoothManager.connectToDevice(it)) {
+                        Toast.makeText(this, "Connected to ${it.name}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to connect to ${it.name}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 
@@ -67,34 +117,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         // Current activity, no need to switch
     }
 
-    private fun logoutUser() {
-        auth.signOut()
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
-    }
-
-    private fun displayUserEmail() {
-        val user = auth.currentUser
-        user?.let {
-            val email = user.email
-            findViewById<TextView>(R.id.username).text = email
-        }
-    }
-
-    // New function to send WiFi info
-    private fun sendWifiInfo() {
-        val ssid = findViewById<EditText>(R.id.editTextSSID).text.toString()
-        val password = findViewById<EditText>(R.id.editTextPassword).text.toString()
-        if (ssid.isNotEmpty() && password.isNotEmpty()) {
-            if (bluetoothManager.isBluetoothEnabled()) {
-                bluetoothManager.sendMessage("SSID:$ssid")
-                bluetoothManager.sendMessage("Password:$password")
-                Toast.makeText(this, "WiFi info sent", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Toast.makeText(this, "Please enter both SSID and Password", Toast.LENGTH_SHORT).show()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        bluetoothManager.disconnect()
     }
 }

@@ -57,6 +57,11 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".DeviceListActivity"
+            android:exported="true">
+        </activity>
+
     </application>
 
     <!-- Feature declarations for Bluetooth -->

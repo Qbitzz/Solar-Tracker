@@ -48,7 +48,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <!-- Back Button -->
+                <!-- Placeholder Button -->
                 <Button
                     android:layout_width="35dp"
                     android:layout_height="35dp"
@@ -104,6 +104,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Connect Wifi"
+                    android:background="@color/darkblue"
+                    android:textColor="@android:color/white"
+                    android:padding="16dp"
+                    android:layout_marginTop="20dp" />
+
+                <!-- New Button to navigate to device scan activity -->
+                <Button
+                    android:id="@+id/btn_scan_devices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Scan Devices"
                     android:background="@color/darkblue"
                     android:textColor="@android:color/white"
                     android:padding="16dp"
