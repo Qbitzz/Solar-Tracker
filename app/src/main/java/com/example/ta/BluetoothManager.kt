@@ -1,6 +1,7 @@
 package com.example.ta
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -62,6 +63,7 @@ class BluetoothManager(private val context: Context) {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun connectToDevice(device: BluetoothDevice): Boolean {
         if (checkPermissions()) {
             return try {
@@ -108,6 +110,7 @@ class BluetoothManager(private val context: Context) {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun getPairedDevices(): Set<BluetoothDevice>? {
         return bluetoothAdapter?.bondedDevices
     }
