@@ -31,35 +31,28 @@ class ProfileActivity : AppCompatActivity() {
         // Initialize BluetoothManager
         bluetoothManager = BluetoothManager(this)
 
-        // Request to enable Bluetooth if it's not enabled
-        if (!bluetoothManager.isBluetoothEnabled()) {
-            bluetoothManager.requestEnableBluetooth(this)
-        }
-
-        // Request Bluetooth permissions necessary for your app
-        bluetoothManager.requestBluetoothPermissions(this)
-
+        // Set username from email login
         ssidEditText = findViewById(R.id.editTextSSID)
         passwordEditText = findViewById(R.id.editTextPassword)
         usernameTextView = findViewById(R.id.username)
-
-        // Set username from email login
         val currentUser = auth.currentUser
         usernameTextView.text = currentUser?.email ?: "Username"
 
+        // Set up buttons
         findViewById<Button>(R.id.btn_send_wifi_info).setOnClickListener {
             sendWiFiInfo()
         }
-
         findViewById<Button>(R.id.btn_scan_devices).setOnClickListener {
             val intent = Intent(this, DeviceListActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_SELECT_DEVICE)
         }
-
         findViewById<Button>(R.id.buttonLogout).setOnClickListener {
             auth.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
+        }
+        findViewById<Button>(R.id.btn_back).setOnClickListener {
+            switchToControlLayout()
         }
 
         // Handle bottom navigation buttons

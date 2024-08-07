@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.IOException
@@ -33,6 +34,8 @@ class BluetoothManager(private val context: Context) {
         private val UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     }
 
+    private val preferences by lazy { context.getSharedPreferences("bluetooth_prefs", Context.MODE_PRIVATE) }
+
     fun isBluetoothSupported(): Boolean = bluetoothAdapter != null
 
     fun isBluetoothEnabled(): Boolean = bluetoothAdapter?.isEnabled ?: false
@@ -51,21 +54,43 @@ class BluetoothManager(private val context: Context) {
     }
 
     fun requestBluetoothPermissions(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), REQUEST_BLUETOOTH_PERMISSION)
+        if (!permissionsGranted()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+                    REQUEST_BLUETOOTH_PERMISSION
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    REQUEST_BLUETOOTH_PERMISSION
+                )
             }
         } else {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_BLUETOOTH_PERMISSION)
-            }
+            enableBluetooth(activity)
+        }
+    }
+
+    private fun permissionsGranted(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        } else {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun enableBluetooth(activity: Activity) {
+        if (!isBluetoothEnabled()) {
+            requestEnableBluetooth(activity)
         }
     }
 
     @SuppressLint("MissingPermission")
     fun connectToDevice(device: BluetoothDevice): Boolean {
-        if (checkPermissions()) {
+        if (permissionsGranted()) {
             return try {
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID_SECURE)
                 bluetoothSocket?.connect()
@@ -87,7 +112,7 @@ class BluetoothManager(private val context: Context) {
     }
 
     fun sendBytes(messageArray: ByteArray) {
-        if (checkPermissions()) {
+        if (permissionsGranted()) {
             try {
                 outputStream?.write(messageArray)
                 outputStream?.flush()
@@ -115,12 +140,21 @@ class BluetoothManager(private val context: Context) {
         return bluetoothAdapter?.bondedDevices
     }
 
-    private fun checkPermissions(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+    fun handlePermissionsResult(
+        activity: Activity,
+        permissions: Map<String, Boolean>,
+        onPermissionsGranted: () -> Unit,
+        onPermissionsDenied: () -> Unit
+    ) {
+        if (permissions[Manifest.permission.BLUETOOTH_CONNECT] == true &&
+            permissions[Manifest.permission.BLUETOOTH_SCAN] == true
+        ) {
+            preferences.edit().putBoolean("hasRequestedPermissions", true).apply()
+            enableBluetooth(activity)
+            onPermissionsGranted()
         } else {
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            preferences.edit().putBoolean("hasRequestedPermissions", true).apply()
+            onPermissionsDenied()
         }
     }
 }

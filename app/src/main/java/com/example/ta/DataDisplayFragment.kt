@@ -28,7 +28,7 @@ class DataDisplayFragment : Fragment() {
         // Load data dynamically from Firebase
         loadData("Temperature", requireView().findViewById(R.id.textViewSuhuValue), "C")
         loadData("Lux", requireView().findViewById(R.id.textViewLuxValue), "Lux")
-        loadData("Arus", requireView().findViewById(R.id.textViewArusValue), "A", true)
+        loadData("Arus", requireView().findViewById(R.id.textViewArusValue), "mA", true)
         loadData("Daya", requireView().findViewById(R.id.textViewDayaValue), "mW")
     }
 

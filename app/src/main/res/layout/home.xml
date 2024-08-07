@@ -24,14 +24,6 @@
                 android:padding="30dp"
                 android:background="@color/darkblue">
 
-                <Switch
-                    android:id="@+id/power"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:track="@drawable/bg_track"
-                    android:scaleX="1.5"
-                    android:scaleY="1"/>
-
                 <Space
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -46,11 +38,6 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="1" />
-
-                <Button
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@color/darkblue" />
 
             </LinearLayout>
 

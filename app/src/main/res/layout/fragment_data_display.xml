@@ -36,7 +36,7 @@
 
             <!-- Add some spacing -->
             <Space
-                android:layout_width="150dp"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content" />
 
             <TextView
@@ -81,7 +81,7 @@
 
             <!-- Add some spacing -->
             <Space
-                android:layout_width="150dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content" />
 
             <TextView
@@ -126,7 +126,7 @@
 
             <!-- Add some spacing -->
             <Space
-                android:layout_width="150dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content" />
 
             <TextView
@@ -170,7 +170,7 @@
 
             <!-- Add some spacing -->
             <Space
-                android:layout_width="150dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content" />
 
             <TextView

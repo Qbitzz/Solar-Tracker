@@ -2,6 +2,7 @@ package com.example.ta
 
 import android.Manifest
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.core.content.ContextCompat
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var bluetoothManager: BluetoothManager
+    private val preferences by lazy { getSharedPreferences("app_prefs", Context.MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +61,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun requestBluetoothPermissionsAndEnable() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+        val hasRequestedPermissions = preferences.getBoolean("hasRequestedPermissions", false)
+
+        if (!hasRequestedPermissions) {
             requestBluetoothPermissionsLauncher.launch(
                 arrayOf(
                     Manifest.permission.BLUETOOTH_CONNECT,
@@ -68,24 +71,31 @@ class HomeActivity : AppCompatActivity() {
                 )
             )
         } else {
-            enableBluetooth()
+            if (permissionsGranted()) {
+                bluetoothManager.requestEnableBluetooth(this)
+            } else {
+                Toast.makeText(this, "Please enable Bluetooth permissions in settings", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     private val requestBluetoothPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (permissions[Manifest.permission.BLUETOOTH_CONNECT] == true &&
-                permissions[Manifest.permission.BLUETOOTH_SCAN] == true) {
-                enableBluetooth()
-            } else {
-                Toast.makeText(this, "Bluetooth permissions are required for this app", Toast.LENGTH_SHORT).show()
-            }
+            bluetoothManager.handlePermissionsResult(
+                this,
+                permissions,
+                onPermissionsGranted = {
+                    bluetoothManager.requestEnableBluetooth(this)
+                },
+                onPermissionsDenied = {
+                    Toast.makeText(this, "Please enable Bluetooth permissions in settings", Toast.LENGTH_LONG).show()
+                }
+            )
         }
 
-    private fun enableBluetooth() {
-        if (!bluetoothManager.isBluetoothEnabled()) {
-            bluetoothManager.requestEnableBluetooth(this)
-        }
+    private fun permissionsGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED
     }
 
     // Bluetooth Management
