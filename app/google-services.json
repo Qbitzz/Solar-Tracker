@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "360822742459",
-    "firebase_url": "https://esp32new-db585-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "esp32new-db585",
-    "storage_bucket": "esp32new-db585.appspot.com"
+    "project_number": "416477655054",
+    "firebase_url": "https://sidang-81cf0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "sidang-81cf0",
+    "storage_bucket": "sidang-81cf0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:360822742459:android:a68c6ef2243dfba9f1789e",
+        "mobilesdk_app_id": "1:416477655054:android:bb880edfb1919615970c5f",
         "android_client_info": {
           "package_name": "com.example.ta"
         }
       },
       "oauth_client": [
         {
-          "client_id": "360822742459-bfga1aaq1v6n8chgl4hh681dnij50u3r.apps.googleusercontent.com",
+          "client_id": "416477655054-7tgh3d9341ua7pvils1a66vd95hp2184.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.ta",
@@ -23,20 +23,20 @@
           }
         },
         {
-          "client_id": "360822742459-1qe4ku8ecb3m8m6k4knoe17k0f99pdn8.apps.googleusercontent.com",
+          "client_id": "416477655054-drebp4qho86gkei67j339tg50ha4rncu.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDOeIatWARydKZK8kmObnQSMlopZwMOmcM"
+          "current_key": "AIzaSyAzgLHnfFyeO7e6REMfT_S_fYiw63Vh0ww"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "360822742459-1qe4ku8ecb3m8m6k4knoe17k0f99pdn8.apps.googleusercontent.com",
+              "client_id": "416477655054-drebp4qho86gkei67j339tg50ha4rncu.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

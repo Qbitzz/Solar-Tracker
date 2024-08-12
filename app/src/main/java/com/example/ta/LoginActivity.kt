@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         // Configure Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.default_web_client_id)) // Ensure this matches your Firebase web client ID
             .requestEmail()
             .build()
 
@@ -68,7 +68,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun loginUser() {
         val email = editTextEmail.text.toString()
         val password = editTextPassword.text.toString()
-        // Log email and password (for debugging purposes only, remove in production)
+        // Log email and password (for debugging purposes)
         Log.w("LoginActivity", "Email: $email")
         Log.w("LoginActivity", "Password: $password")
 
